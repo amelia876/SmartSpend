@@ -69,15 +69,15 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="w-full max-w-md px-2 sm:px-0">
-      <div className="mb-6 sm:mb-8 text-center">
-        <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-2">Sign in</h2>
-        <p className="text-sm sm:text-base text-muted-foreground">
+    <div className="w-full max-w-md">
+      <div className="mb-6 text-center">
+        <h2 className="font-display text-2xl font-bold text-foreground mb-2">Sign in</h2>
+        <p className="text-sm text-muted-foreground">
           Enter your credentials to access your account
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4">
         {errors.general && (
           <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
             {errors.general}
@@ -85,14 +85,14 @@ export default function LoginPage() {
         )}
         <FieldGroup>
           <Field>
-            <FieldLabel htmlFor="email">User Name</FieldLabel>
+            <FieldLabel htmlFor="email">Email</FieldLabel>
             <div className="relative">
               <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="email"
                 type="email"
                 placeholder="you@example.com"
-                className="pl-10 h-12 bg-secondary/50 border-border"
+                className="pl-10 h-11 bg-secondary/50 border-border text-base"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 disabled={isLoading}
@@ -109,7 +109,7 @@ export default function LoginPage() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
-                className="pl-10 pr-16 h-12 bg-secondary/50 border-border"
+                className="pl-10 pr-16 h-11 bg-secondary/50 border-border text-base"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 disabled={isLoading}
@@ -143,7 +143,7 @@ export default function LoginPage() {
 
           <Button
             type="submit"
-            className="w-full h-12 text-base font-semibold"
+            className="w-full h-11 text-base font-semibold"
             style={{ background: 'linear-gradient(135deg, #004aad 0%, #38b6ff 100%)' }}
             disabled={isLoading}
           >
@@ -157,7 +157,7 @@ export default function LoginPage() {
             )}
           </Button>
 
-          <div className="relative my-4">
+          <div className="relative my-3">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-border" />
             </div>
@@ -169,14 +169,14 @@ export default function LoginPage() {
           <Button
             type="button"
             variant="outline"
-            className="w-full h-12 text-base"
+            className="w-full h-11 text-base"
           >
             Sign in with other
           </Button>
         </FieldGroup>
       </form>
 
-      <p className="mt-8 text-center text-sm text-muted-foreground">
+      <p className="mt-6 text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}
         <Link href="/signup" className="font-semibold text-primary hover:underline">
           Sign Up

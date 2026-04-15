@@ -123,36 +123,36 @@ export default function SignupPage() {
   // Role Selection Screen
   if (!selectedRole) {
     return (
-      <div className="w-full max-w-lg px-2 sm:px-0">
-        <div className="mb-6 sm:mb-8 text-center">
-          <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-2">Create Account</h2>
-          <p className="text-sm sm:text-base text-muted-foreground">
+      <div className="w-full max-w-md">
+        <div className="mb-6 text-center">
+          <h2 className="font-display text-2xl font-bold text-foreground mb-2">Create Account</h2>
+          <p className="text-sm text-muted-foreground">
             Choose your account type to get started
           </p>
         </div>
 
-        <div className="space-y-2 sm:space-y-3">
+        <div className="space-y-3">
           {roles.map((role) => {
             const Icon = role.icon
             return (
               <button
                 key={role.id}
                 onClick={() => setSelectedRole(role.id)}
-                className="w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border border-border bg-secondary/30 hover:bg-secondary hover:border-primary/50 transition-all text-left group"
+                className="w-full flex items-center gap-3 p-3 rounded-xl border border-border bg-secondary/30 hover:bg-secondary hover:border-primary/50 transition-all text-left group"
               >
-                <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors shrink-0">
-                  <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors shrink-0">
+                  <Icon className="h-5 w-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-foreground text-sm sm:text-base">{role.label}</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground truncate">{role.description}</p>
+                  <p className="font-semibold text-foreground text-sm">{role.label}</p>
+                  <p className="text-xs text-muted-foreground">{role.description}</p>
                 </div>
               </button>
             )
           })}
         </div>
 
-        <p className="mt-6 sm:mt-8 text-center text-sm text-muted-foreground">
+        <p className="mt-6 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
           <Link href="/login" className="font-semibold text-primary hover:underline">
             Sign in
@@ -164,21 +164,21 @@ export default function SignupPage() {
 
   // Signup Form Screen
   return (
-    <div className="w-full max-w-md max-h-[85vh] overflow-y-auto px-1">
+    <div className="w-full max-w-md">
       <button
         onClick={() => setSelectedRole("")}
-        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 sm:mb-6"
+        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to role selection
+        Back
       </button>
 
-      <div className="mb-4 sm:mb-6 text-center">
-        <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-1">Sign up as {roles.find(r => r.id === selectedRole)?.label}</h2>
-        <p className="text-xs sm:text-sm text-muted-foreground">Fill in your details to create an account</p>
+      <div className="mb-4 text-center">
+        <h2 className="font-display text-xl font-bold text-foreground mb-1">Sign up as {roles.find(r => r.id === selectedRole)?.label}</h2>
+        <p className="text-xs text-muted-foreground">Fill in your details to create an account</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-3">
         {errors.general && (
           <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
             {errors.general}
@@ -193,7 +193,7 @@ export default function SignupPage() {
               <Input
                 id="name"
                 placeholder="John Doe"
-                className="pl-10 h-11 bg-secondary/50"
+                className="pl-10 h-10 bg-secondary/50 text-base"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 disabled={isLoading}
@@ -210,7 +210,7 @@ export default function SignupPage() {
                 id="email"
                 type="email"
                 placeholder="you@example.com"
-                className="pl-10 h-11 bg-secondary/50"
+                className="pl-10 h-10 bg-secondary/50 text-base"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 disabled={isLoading}
@@ -222,7 +222,7 @@ export default function SignupPage() {
           <Field>
             <FieldLabel htmlFor="country">Country</FieldLabel>
             <Select value={formData.country} onValueChange={(value) => setFormData({ ...formData, country: value })}>
-              <SelectTrigger className="h-11 bg-secondary/50">
+              <SelectTrigger className="h-10 bg-secondary/50">
                 <SelectValue placeholder="Select your country" />
               </SelectTrigger>
               <SelectContent>
@@ -237,14 +237,14 @@ export default function SignupPage() {
           {/* Student-specific fields */}
           {selectedRole === "student" && (
             <>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <Field>
                   <FieldLabel htmlFor="age">Age</FieldLabel>
                   <Input
                     id="age"
                     type="number"
                     placeholder="18"
-                    className="h-11 bg-secondary/50"
+                    className="h-10 bg-secondary/50 text-base"
                     value={formData.age}
                     onChange={(e) => setFormData({ ...formData, age: e.target.value })}
                     disabled={isLoading}
@@ -254,7 +254,7 @@ export default function SignupPage() {
                 <Field>
                   <FieldLabel htmlFor="gender">Gender</FieldLabel>
                   <Select value={formData.gender} onValueChange={(value) => setFormData({ ...formData, gender: value })}>
-                    <SelectTrigger className="h-11 bg-secondary/50">
+                    <SelectTrigger className="h-10 bg-secondary/50">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent>
@@ -271,7 +271,7 @@ export default function SignupPage() {
                 <Input
                   id="institution"
                   placeholder="University or School name"
-                  className="h-11 bg-secondary/50"
+                  className="h-10 bg-secondary/50 text-base"
                   value={formData.institution}
                   onChange={(e) => setFormData({ ...formData, institution: e.target.value })}
                   disabled={isLoading}
@@ -288,7 +288,7 @@ export default function SignupPage() {
                 <Input
                   id="businessName"
                   placeholder="Your Business Name"
-                  className="h-11 bg-secondary/50"
+                  className="h-10 bg-secondary/50 text-base"
                   value={formData.businessName}
                   onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
                   disabled={isLoading}
@@ -298,7 +298,7 @@ export default function SignupPage() {
               <Field>
                 <FieldLabel htmlFor="industry">Industry</FieldLabel>
                 <Select value={formData.industry} onValueChange={(value) => setFormData({ ...formData, industry: value })}>
-                  <SelectTrigger className="h-11 bg-secondary/50">
+                  <SelectTrigger className="h-10 bg-secondary/50">
                     <SelectValue placeholder="Select industry" />
                   </SelectTrigger>
                   <SelectContent>
@@ -325,7 +325,7 @@ export default function SignupPage() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Create a password"
-                className="pl-10 pr-16 h-11 bg-secondary/50"
+                className="pl-10 pr-16 h-10 bg-secondary/50 text-base"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 disabled={isLoading}
@@ -349,7 +349,7 @@ export default function SignupPage() {
                 id="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Confirm your password"
-                className="pl-10 pr-16 h-11 bg-secondary/50"
+                className="pl-10 pr-16 h-10 bg-secondary/50 text-base"
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 disabled={isLoading}
@@ -367,7 +367,7 @@ export default function SignupPage() {
 
           <Button
             type="submit"
-            className="w-full h-12 text-base font-semibold"
+            className="w-full h-11 text-base font-semibold mt-2"
             style={{ background: 'linear-gradient(135deg, #004aad 0%, #38b6ff 100%)' }}
             disabled={isLoading}
           >
@@ -383,9 +383,9 @@ export default function SignupPage() {
         </FieldGroup>
       </form>
 
-      <p className="mt-6 text-center text-xs text-muted-foreground">
+      <p className="mt-4 text-center text-xs text-muted-foreground">
         By creating an account, you agree to our{" "}
-        <Link href="/terms" className="underline hover:text-foreground">Terms of Service</Link>
+        <Link href="/terms" className="underline hover:text-foreground">Terms</Link>
         {" "}and{" "}
         <Link href="/privacy" className="underline hover:text-foreground">Privacy Policy</Link>
       </p>
