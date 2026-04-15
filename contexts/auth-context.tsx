@@ -52,6 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const profileDoc = await getDoc(doc(db, "users", uid))
       if (profileDoc.exists()) {
         const data = profileDoc.data()
+        console.log("[v0] Firestore profile loaded:", data)
         const profile = {
           ...data,
           createdAt: data.createdAt?.toDate?.() || new Date(),
@@ -61,13 +62,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
           sessionStorage.setItem(`smartspend_profile_${uid}`, JSON.stringify({ ...profile, createdAt: profile.createdAt.toISOString() }))
         } catch {}
+      } else {
+        // Document doesn't exist in Firestore - try sessionStorage cache
+        console.log("[v0] Firestore profile not found, checking cache...")
+        try {
+          const cached = sessionStorage.getItem(`smartspend_profile_${uid}`)
+          if (cached) {
+            const data = JSON.parse(cached)
+            console.log("[v0] Restored profile from cache:", data)
+            setUserProfile({ ...data, createdAt: new Date(data.createdAt) } as UserProfile)
+          }
+        } catch {}
       }
     } catch (error) {
+      console.log("[v0] Firestore error, checking cache...")
       // Firestore offline - try to restore from sessionStorage cache
       try {
         const cached = sessionStorage.getItem(`smartspend_profile_${uid}`)
         if (cached) {
           const data = JSON.parse(cached)
+          console.log("[v0] Restored profile from cache:", data)
           setUserProfile({ ...data, createdAt: new Date(data.createdAt) } as UserProfile)
         }
       } catch {}
@@ -100,8 +114,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password: string,
     profile: Omit<UserProfile, "uid" | "isPro" | "createdAt">
   ) => {
+    console.log("[v0] SignUp called with profile:", profile)
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
     const { uid } = userCredential.user
+    console.log("[v0] Firebase user created:", uid)
 
     // Create user profile in Firestore
     const userProfile: UserProfile = {
@@ -139,6 +155,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       userProfile.businessType = profile.businessType
     }
 
+    console.log("[v0] Attempting Firestore write with data:", firestoreData)
+
     // Try to save profile to Firestore with a timeout
     // Don't block signup if Firestore write fails (e.g., offline)
     try {
@@ -149,15 +167,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setDoc(doc(db, "users", uid), firestoreData),
         timeoutPromise
       ])
+      console.log("[v0] Firestore write successful")
     } catch (firestoreError) {
       // Log error but don't throw - user is authenticated, profile will sync later
-      console.error("[v0] Firestore profile write failed (will retry on next load):", firestoreError)
+      console.error("[v0] Firestore profile write failed:", firestoreError)
     }
 
+    console.log("[v0] Setting userProfile state:", userProfile)
     setUserProfile(userProfile)
     // Cache locally so profile survives refreshes even when Firestore is offline
     try {
       sessionStorage.setItem(`smartspend_profile_${uid}`, JSON.stringify({ ...userProfile, createdAt: userProfile.createdAt.toISOString() }))
+      console.log("[v0] Profile cached to sessionStorage")
     } catch {}
   }
 

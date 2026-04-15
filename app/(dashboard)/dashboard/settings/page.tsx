@@ -90,9 +90,12 @@ export default function SettingsPage() {
     }
   }
 
+  console.log("[v0] Settings page - userProfile:", userProfile)
+  console.log("[v0] Settings page - role:", userProfile?.role)
   const isBusiness = userProfile?.role === "business"
   const isStudent = userProfile?.role === "student"
   const isPro = userProfile?.isPro === true
+  console.log("[v0] Settings page - isBusiness:", isBusiness)
   const isAtTeamLimit = !isPro && teamMembers.length >= FREE_TEAM_LIMIT
 
   const handleInviteClick = () => {

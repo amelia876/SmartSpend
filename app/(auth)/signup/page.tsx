@@ -92,16 +92,19 @@ export default function SignupPage() {
     setIsLoading(true)
     setErrors({})
 
+    const profileData = {
+      email: formData.email,
+      name: formData.name,
+      role: selectedRole as "student" | "personal" | "business",
+      country: formData.country,
+      institution: formData.institution || undefined,
+      businessName: formData.businessName || undefined,
+      businessType: formData.industry || undefined,
+    }
+    console.log("[v0] Submitting signup with profile:", profileData)
+
     try {
-      await signUp(formData.email, formData.password, {
-        email: formData.email,
-        name: formData.name,
-        role: selectedRole as "student" | "personal" | "business",
-        country: formData.country,
-        institution: formData.institution || undefined,
-        businessName: formData.businessName || undefined,
-        businessType: formData.industry || undefined,
-      })
+      await signUp(formData.email, formData.password, profileData)
       // Signup successful - redirect to dashboard
       router.replace("/dashboard")
     } catch (error: unknown) {
