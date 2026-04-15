@@ -16,7 +16,11 @@ import {
 } from "@/components/ui/select"
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
-import { ArrowLeft, DollarSign, Store, Calendar, Tag, FileText } from "lucide-react"
+import { ArrowLeft, DollarSign, Store, Calendar, Tag, FileText, Crown, Zap, Lock, BarChart3 } from "lucide-react"
+
+const FREE_EXPENSE_LIMIT = 3
+// In a real app this count would come from the database
+const CURRENT_EXPENSE_COUNT = 10
 
 const categories = [
   { value: "groceries", label: "Groceries" },
@@ -41,14 +45,81 @@ export default function AddExpensePage() {
     notes: "",
   })
 
+  // Free users are limited to FREE_EXPENSE_LIMIT expenses
+  const isPro = false
+  const isAtLimit = !isPro && CURRENT_EXPENSE_COUNT >= FREE_EXPENSE_LIMIT
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-
-    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000))
-
     router.push("/dashboard/expenses")
+  }
+
+  if (isAtLimit) {
+    return (
+      <div className="space-y-4 md:space-y-6">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <Button variant="ghost" size="icon" asChild className="h-9 w-9 sm:h-10 sm:w-10">
+            <Link href="/dashboard/expenses">
+              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+            </Link>
+          </Button>
+          <div>
+            <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground md:text-3xl">
+              Add Expense
+            </h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              Manually record a new expense
+            </p>
+          </div>
+        </div>
+
+        <Card className="max-w-md border-border">
+          <CardContent className="flex flex-col items-center text-center p-8 gap-4">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500">
+              <Crown className="h-8 w-8 text-white" />
+            </div>
+            <div>
+              <h2 className="font-display text-xl font-bold text-foreground mb-1">
+                Expense Limit Reached
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                You&apos;ve used all <span className="font-semibold text-foreground">{FREE_EXPENSE_LIMIT} free expenses</span>. Upgrade to Pro to add unlimited expenses.
+              </p>
+            </div>
+            <div className="w-full rounded-lg border border-border bg-secondary/30 p-4 text-left space-y-2">
+              <p className="text-xs font-semibold text-foreground">Pro includes:</p>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Zap className="h-3.5 w-3.5 text-primary shrink-0" />
+                Unlimited expense entries
+              </div>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <BarChart3 className="h-3.5 w-3.5 text-primary shrink-0" />
+                Advanced analytics dashboard
+              </div>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Lock className="h-3.5 w-3.5 text-primary shrink-0" />
+                Edit expenses anytime
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2 w-full">
+              <Button variant="outline" asChild className="flex-1">
+                <Link href="/dashboard/expenses">Go Back</Link>
+              </Button>
+              <Button
+                onClick={() => router.push("/dashboard/upgrade")}
+                className="flex-1 gap-2"
+                style={{ background: "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)" }}
+              >
+                <Crown className="h-4 w-4" />
+                Upgrade Now
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (

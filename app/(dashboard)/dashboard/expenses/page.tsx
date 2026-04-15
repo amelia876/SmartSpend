@@ -62,6 +62,8 @@ const expenses = [
   { id: 10, merchant: "Water Bill", category: "utilities", amount: 35.00, date: "Apr 1, 2026", createdAt: new Date("2026-04-01") },
 ]
 
+const FREE_EXPENSE_LIMIT = 3
+
 export default function ExpensesPage() {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
@@ -114,12 +116,27 @@ export default function ExpensesPage() {
             View and manage all your transactions
           </p>
         </div>
-        <Button asChild className="gap-2 w-fit">
-          <Link href="/dashboard/expenses/add">
-            <Plus className="h-4 w-4" />
-            Add Expense
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          {!isPro && (
+            <span className="text-xs text-muted-foreground">
+              {Math.min(expenses.length, FREE_EXPENSE_LIMIT)}/{FREE_EXPENSE_LIMIT} free
+            </span>
+          )}
+          <Button
+            asChild
+            className="gap-2 w-fit"
+            variant={!isPro && expenses.length >= FREE_EXPENSE_LIMIT ? "outline" : "default"}
+          >
+            <Link href="/dashboard/expenses/add">
+              {!isPro && expenses.length >= FREE_EXPENSE_LIMIT ? (
+                <Crown className="h-4 w-4 text-amber-500" />
+              ) : (
+                <Plus className="h-4 w-4" />
+              )}
+              Add Expense
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Stats Blocks */}

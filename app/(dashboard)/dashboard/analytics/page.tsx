@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {
@@ -24,7 +25,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts"
-import { TrendingUp, TrendingDown, DollarSign, Receipt, ArrowUpRight } from "lucide-react"
+import { TrendingUp, TrendingDown, DollarSign, Receipt, ArrowUpRight, Crown, Lock, BarChart3, Zap } from "lucide-react"
 
 const monthlyData = [
   { name: "Jan", spending: 1200, budget: 1500 },
@@ -49,9 +50,111 @@ const weeklyComparison = [
 ]
 
 export default function AnalyticsPage() {
+  const isPro = false // This would come from user subscription status
   const totalSpending = categoryData.reduce((acc, item) => acc + item.value, 0)
   const avgDaily = Math.round(totalSpending / 30)
   const transactionCount = 47
+
+  if (!isPro) {
+    return (
+      <div className="space-y-4 md:space-y-6">
+        <div>
+          <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground md:text-3xl">
+            Analytics
+          </h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
+            Understand your spending patterns and trends
+          </p>
+        </div>
+
+        {/* Blurred preview + upgrade overlay */}
+        <div className="relative rounded-xl overflow-hidden">
+          {/* Blurred background charts (decorative) */}
+          <div className="pointer-events-none select-none blur-sm opacity-40 space-y-4">
+            <div className="grid gap-3 grid-cols-3">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="border-border">
+                  <CardContent className="p-4">
+                    <div className="h-4 w-16 bg-muted rounded mb-2" />
+                    <div className="h-8 w-24 bg-muted rounded" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+              <Card className="border-border">
+                <CardContent className="p-4">
+                  <div className="h-[180px] bg-muted/50 rounded" />
+                </CardContent>
+              </Card>
+              <Card className="border-border">
+                <CardContent className="p-4">
+                  <div className="h-[180px] bg-muted/50 rounded" />
+                </CardContent>
+              </Card>
+            </div>
+            <Card className="border-border">
+              <CardContent className="p-4">
+                <div className="h-[180px] bg-muted/50 rounded" />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Upgrade overlay */}
+          <div className="absolute inset-0 flex items-center justify-center bg-background/70 backdrop-blur-sm">
+            <div className="text-center px-6 py-8 max-w-sm mx-auto">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 mx-auto mb-4">
+                <Crown className="h-8 w-8 text-white" />
+              </div>
+              <h2 className="font-display text-xl font-bold text-foreground mb-2">
+                Analytics is a Pro Feature
+              </h2>
+              <p className="text-sm text-muted-foreground mb-6">
+                Unlock detailed spending charts, category breakdowns, and weekly comparisons with a Pro subscription.
+              </p>
+              <div className="space-y-2 text-left mb-6 bg-card border border-border rounded-lg p-4">
+                <p className="text-xs font-semibold text-foreground mb-2">What you&apos;ll get:</p>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <BarChart3 className="h-3.5 w-3.5 text-primary shrink-0" />
+                    Monthly trend charts and comparisons
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <PieChart className="h-3.5 w-3.5 text-primary shrink-0" />
+                    Spending breakdown by category
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Zap className="h-3.5 w-3.5 text-primary shrink-0" />
+                    Weekly comparisons and averages
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Lock className="h-3.5 w-3.5 text-primary shrink-0" />
+                    Export reports as PDF or CSV
+                  </div>
+                </div>
+              </div>
+              <Button
+                asChild
+                className="w-full gap-2"
+                style={{ background: "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)" }}
+              >
+                <Link href="/dashboard/upgrade">
+                  <Crown className="h-4 w-4" />
+                  Upgrade to Pro
+                </Link>
+              </Button>
+              <p className="text-xs text-muted-foreground mt-3">
+                Already on Pro?{" "}
+                <Link href="/dashboard/settings" className="text-primary hover:underline">
+                  Check your account
+                </Link>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4 md:space-y-6">

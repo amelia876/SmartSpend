@@ -18,12 +18,12 @@ import {
 import { Button } from "@/components/ui/button"
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Scan Receipt", href: "/dashboard/scan", icon: Camera },
-  { name: "Expenses", href: "/dashboard/expenses", icon: Receipt },
-  { name: "Budgets", href: "/dashboard/budgets", icon: PieChart },
-  { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, pro: false },
+  { name: "Scan Receipt", href: "/dashboard/scan", icon: Camera, pro: false },
+  { name: "Expenses", href: "/dashboard/expenses", icon: Receipt, pro: false },
+  { name: "Budgets", href: "/dashboard/budgets", icon: PieChart, pro: false },
+  { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3, pro: true },
+  { name: "Settings", href: "/dashboard/settings", icon: Settings, pro: false },
 ]
 
 export function Sidebar() {
@@ -65,6 +65,7 @@ export function Sidebar() {
       <nav className="flex-1 space-y-1 p-4">
         {navigation.map((item) => {
           const isActive = pathname === item.href
+          const isLocked = item.pro && !userProfile?.isPro
           return (
             <Link
               key={item.name}
@@ -76,8 +77,11 @@ export function Sidebar() {
                   : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               )}
             >
-              <item.icon className="h-5 w-5" />
-              {item.name}
+              <item.icon className="h-5 w-5 shrink-0" />
+              <span className="flex-1">{item.name}</span>
+              {isLocked && (
+                <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+              )}
             </Link>
           )
         })}
