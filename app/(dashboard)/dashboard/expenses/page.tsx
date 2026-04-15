@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -26,10 +27,9 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog"
-import { Plus, Search, Filter, MoreVertical, Pencil, Trash2, ShoppingCart, Car, Coffee, Film, Zap, CreditCard, TrendingDown, Calendar } from "lucide-react"
+import { Plus, Search, Filter, MoreVertical, Pencil, Trash2, ShoppingCart, Car, Coffee, Film, Zap, CreditCard, TrendingDown, Calendar, Crown, Lock } from "lucide-react"
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   groceries: ShoppingCart,
@@ -63,11 +63,14 @@ const expenses = [
 ]
 
 export default function ExpensesPage() {
+  const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editAmount, setEditAmount] = useState<string>("")
-  const [isPro, setIsPro] = useState(false)
+  const [isPro] = useState(false) // This would come from user subscription status
+  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false)
+  const [lockedExpenseName, setLockedExpenseName] = useState("")
 
   const filteredExpenses = expenses.filter((expense) => {
     const matchesSearch = expense.merchant.toLowerCase().includes(searchQuery.toLowerCase())
@@ -88,6 +91,10 @@ export default function ExpensesPage() {
     if (canEdit(expense)) {
       setEditingId(expense.id)
       setEditAmount(expense.amount.toString())
+    } else {
+      // Show upgrade prompt for locked expenses
+      setLockedExpenseName(expense.merchant)
+      setShowUpgradeDialog(true)
     }
   }
 
@@ -230,8 +237,13 @@ export default function ExpensesPage() {
                         </Badge>
                         <span className="text-xs text-muted-foreground hidden sm:inline">{expense.date}</span>
                         {!canEditThis && (
-                          <Badge variant="outline" className="text-xs text-destructive hidden sm:inline-flex">
-                            Locked
+                          <Badge 
+                            variant="outline" 
+                            className="text-xs text-amber-600 border-amber-300 hidden sm:inline-flex gap-1 cursor-pointer hover:bg-amber-50"
+                            onClick={() => handleEdit(expense)}
+                          >
+                            <Crown className="h-3 w-3" />
+                            Pro
                           </Badge>
                         )}
                       </div>
@@ -280,11 +292,19 @@ export default function ExpensesPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem
                           onClick={() => handleEdit(expense)}
-                          disabled={!canEditThis}
-                          className={!canEditThis ? "opacity-50 cursor-not-allowed" : ""}
+                          className={!canEditThis ? "text-amber-600" : ""}
                         >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          {canEditThis ? "Edit" : "Edit (Locked)"}
+                          {canEditThis ? (
+                            <>
+                              <Pencil className="mr-2 h-4 w-4" />
+                              Edit
+                            </>
+                          ) : (
+                            <>
+                              <Crown className="mr-2 h-4 w-4 text-amber-500" />
+                              Edit (Upgrade)
+                            </>
+                          )}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="text-destructive">
@@ -300,6 +320,70 @@ export default function ExpensesPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Upgrade to Premium Dialog */}
+      <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500">
+                <Crown className="h-6 w-6 text-white" />
+              </div>
+              <DialogTitle className="text-xl">Upgrade to Premium</DialogTitle>
+            </div>
+            <DialogDescription className="text-left">
+              The expense <span className="font-semibold text-foreground">&quot;{lockedExpenseName}&quot;</span> is locked because it was created more than 24 hours ago.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+              <p className="text-sm text-foreground font-medium mb-2">
+                With Premium, you can:
+              </p>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <Pencil className="h-4 w-4 text-primary" />
+                  Edit expenses anytime, no 24-hour limit
+                </li>
+                <li className="flex items-center gap-2">
+                  <Lock className="h-4 w-4 text-primary" />
+                  Unlock all locked expenses instantly
+                </li>
+                <li className="flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-primary" />
+                  Unlimited receipt scans per day
+                </li>
+              </ul>
+            </div>
+            
+            <p className="text-xs text-muted-foreground text-center">
+              Free users can only edit expenses within 24 hours of creation.
+            </p>
+          </div>
+
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowUpgradeDialog(false)}
+              className="w-full sm:w-auto"
+            >
+              Maybe Later
+            </Button>
+            <Button 
+              onClick={() => {
+                setShowUpgradeDialog(false)
+                router.push("/dashboard/upgrade")
+              }}
+              className="w-full sm:w-auto gap-2"
+              style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)' }}
+            >
+              <Crown className="h-4 w-4" />
+              Upgrade Now
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
