@@ -52,25 +52,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const profileDoc = await getDoc(doc(db, "users", uid))
       if (profileDoc.exists()) {
         const data = profileDoc.data()
-        setUserProfile({
+        const profile = {
           ...data,
           createdAt: data.createdAt?.toDate?.() || new Date(),
-        } as UserProfile)
+        } as UserProfile
+        setUserProfile(profile)
+        // Cache in sessionStorage so refreshes work even when Firestore is offline
+        try {
+          sessionStorage.setItem(`smartspend_profile_${uid}`, JSON.stringify({ ...profile, createdAt: profile.createdAt.toISOString() }))
+        } catch {}
       }
     } catch (error) {
-      console.error("[v0] Error fetching user profile:", error)
-      // Don't throw - profile fetch failing shouldn't break the app
+      // Firestore offline - try to restore from sessionStorage cache
+      try {
+        const cached = sessionStorage.getItem(`smartspend_profile_${uid}`)
+        if (cached) {
+          const data = JSON.parse(cached)
+          setUserProfile({ ...data, createdAt: new Date(data.createdAt) } as UserProfile)
+        }
+      } catch {}
     }
   }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      console.log("[v0] Auth state changed:", firebaseUser?.email || "no user")
       setUser(firebaseUser)
       
       if (firebaseUser) {
-        // Fetch profile in background, don't block loading state
-        fetchUserProfile(firebaseUser.uid)
+        // Await profile fetch so userProfile is populated before loading = false
+        await fetchUserProfile(firebaseUser.uid)
       } else {
         setUserProfile(null)
       }
@@ -145,9 +155,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     setUserProfile(userProfile)
+    // Cache locally so profile survives refreshes even when Firestore is offline
+    try {
+      sessionStorage.setItem(`smartspend_profile_${uid}`, JSON.stringify({ ...userProfile, createdAt: userProfile.createdAt.toISOString() }))
+    } catch {}
   }
 
   const signOut = async () => {
+    // Clear cached profile on sign out
+    if (user) {
+      try { sessionStorage.removeItem(`smartspend_profile_${user.uid}`) } catch {}
+    }
     await firebaseSignOut(auth)
     setUserProfile(null)
   }
@@ -191,8 +209,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error("[v0] Failed to update Firestore:", error)
     }
 
-    // Update local state immediately
-    setUserProfile((prev) => (prev ? { ...prev, isPro: true } : prev))
+    setUserProfile((prev) => {
+      const updated = prev ? { ...prev, isPro: true } : prev
+      if (updated) {
+        try { sessionStorage.setItem(`smartspend_profile_${user.uid}`, JSON.stringify({ ...updated, createdAt: updated.createdAt.toISOString() })) } catch {}
+      }
+      return updated
+    })
   }
 
   // Demo function to downgrade to Free (for demonstration purposes)
@@ -205,8 +228,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error("[v0] Failed to update Firestore:", error)
     }
 
-    // Update local state immediately
-    setUserProfile((prev) => (prev ? { ...prev, isPro: false } : prev))
+    setUserProfile((prev) => {
+      const updated = prev ? { ...prev, isPro: false } : prev
+      if (updated) {
+        try { sessionStorage.setItem(`smartspend_profile_${user.uid}`, JSON.stringify({ ...updated, createdAt: updated.createdAt.toISOString() })) } catch {}
+      }
+      return updated
+    })
   }
 
   return (
