@@ -75,16 +75,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch {}
       }
     } catch (error) {
-      console.log("[v0] Firestore error, checking cache...")
+      console.log("[v0] Firestore error, checking cache for uid:", uid)
       // Firestore offline - try to restore from sessionStorage cache
       try {
-        const cached = sessionStorage.getItem(`smartspend_profile_${uid}`)
+        const cacheKey = `smartspend_profile_${uid}`
+        const cached = sessionStorage.getItem(cacheKey)
+        console.log("[v0] Cache key:", cacheKey, "Cached value exists:", !!cached)
         if (cached) {
           const data = JSON.parse(cached)
           console.log("[v0] Restored profile from cache:", data)
           setUserProfile({ ...data, createdAt: new Date(data.createdAt) } as UserProfile)
+        } else {
+          console.log("[v0] No cached profile found")
         }
-      } catch {}
+      } catch (cacheError) {
+        console.log("[v0] Cache read error:", cacheError)
+      }
     }
   }
 
@@ -183,10 +189,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signOut = async () => {
-    // Clear cached profile on sign out
-    if (user) {
-      try { sessionStorage.removeItem(`smartspend_profile_${user.uid}`) } catch {}
-    }
+    // Don't clear sessionStorage cache - keep it so profile persists across logins
+    // when Firestore is offline. The cache is keyed by uid, so switching users
+    // will naturally use a different cache key.
     await firebaseSignOut(auth)
     setUserProfile(null)
   }
