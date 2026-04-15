@@ -13,17 +13,17 @@ export default function AuthLayout({
   const router = useRouter()
 
   return (
-    <div className="flex min-h-screen flex-col">
-      {/* Top navbar — same style as landing page header */}
+    <div className="flex min-h-svh flex-col">
+      {/* Top navbar */}
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
-        <div className="container mx-auto flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4">
+        <div className="flex h-14 items-center justify-between px-4">
           {/* Left: back button + logo */}
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="icon"
               onClick={() => router.back()}
-              className="h-8 w-8 sm:h-9 sm:w-9 shrink-0"
+              className="h-8 w-8 shrink-0"
               aria-label="Go back"
             >
               <svg
@@ -47,34 +47,21 @@ export default function AuthLayout({
                 alt="SmartSpend Logo"
                 width={32}
                 height={32}
-                className="rounded-full sm:w-[38px] sm:h-[38px]"
+                className="rounded-full"
               />
-              <span className="font-display text-lg sm:text-xl font-bold text-foreground hidden xs:inline">
+              <span className="font-display text-lg font-bold text-foreground hidden min-[400px]:inline">
                 SmartSpend
               </span>
             </Link>
           </div>
 
-          {/* Center nav links */}
-          <nav className="hidden items-center gap-8 lg:flex">
-            <Link href="/#features" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              Features
-            </Link>
-            <Link href="/#pricing" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              Pricing
-            </Link>
-            <Link href="/#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              How It Works
-            </Link>
-          </nav>
-
           {/* Right: auth links */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Button variant="ghost" asChild size="sm" className="hidden sm:inline-flex">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" asChild size="sm" className="hidden min-[500px]:inline-flex">
               <Link href="/login">Log In</Link>
             </Button>
             <Button asChild size="sm">
-              <Link href="/signup">Get Started</Link>
+              <Link href="/signup">Sign Up</Link>
             </Button>
           </div>
         </div>
@@ -82,7 +69,7 @@ export default function AuthLayout({
 
       {/* Split-screen body */}
       <div className="flex flex-1">
-        {/* Left panel — blue gradient with decorative circles */}
+        {/* Left panel — blue gradient (hidden on mobile/tablet) */}
         <div
           className="hidden w-2/5 relative overflow-hidden lg:flex flex-col justify-between p-8 xl:p-12"
           style={{ background: "linear-gradient(135deg, #004aad 0%, #38b6ff 100%)" }}
@@ -126,7 +113,7 @@ export default function AuthLayout({
         </div>
 
         {/* Right panel — form */}
-        <div className="flex flex-1 items-center justify-center bg-card p-6 md:p-10">
+        <div className="flex flex-1 items-center justify-center bg-card px-4 py-6 sm:p-8 md:p-10 overflow-y-auto">
           {children}
         </div>
       </div>
