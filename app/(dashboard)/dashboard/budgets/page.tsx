@@ -78,7 +78,7 @@ export default function BudgetsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <BudgetsHeader
         totalBudget={totalBudget}
         totalSpent={totalSpent}
@@ -92,7 +92,7 @@ export default function BudgetsPage() {
           description="Create your first budget to start tracking your spending limits."
         />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {budgets.map((budget) => (
             <BudgetCard
               key={budget.id}

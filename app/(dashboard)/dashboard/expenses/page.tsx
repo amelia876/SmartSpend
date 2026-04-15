@@ -97,17 +97,17 @@ export default function ExpensesPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground md:text-3xl">
+          <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground md:text-3xl">
             Expenses
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm sm:text-base text-muted-foreground">
             View and manage all your transactions
           </p>
         </div>
-        <Button asChild className="gap-2">
+        <Button asChild className="gap-2 w-fit">
           <Link href="/dashboard/expenses/add">
             <Plus className="h-4 w-4" />
             Add Expense
@@ -116,56 +116,56 @@ export default function ExpensesPage() {
       </div>
 
       {/* Stats Blocks */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-3">
         <Card className="border-border">
-          <CardContent className="pt-6">
+          <CardContent className="p-4 sm:pt-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Total Spent</p>
-                <p className="font-display text-3xl font-bold text-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-1">Total Spent</p>
+                <p className="font-display text-xl sm:text-3xl font-bold text-foreground">
                   ${totalFiltered.toFixed(2)}
                 </p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/20">
-                <TrendingDown className="h-6 w-6 text-primary" />
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-primary/20 shrink-0">
+                <TrendingDown className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="border-border">
-          <CardContent className="pt-6">
+          <CardContent className="p-4 sm:pt-6">
             <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Most Recent</p>
-                <p className="font-display text-2xl font-bold text-foreground">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-1">Most Recent</p>
+                <p className="font-display text-lg sm:text-2xl font-bold text-foreground truncate">
                   {mostRecent ? mostRecent.merchant : "N/A"}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
                   {mostRecent ? `$${mostRecent.amount.toFixed(2)}` : ""}
                 </p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-2/20">
-                <Calendar className="h-6 w-6 text-chart-2" />
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-chart-2/20 shrink-0 ml-2">
+                <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-chart-2" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="border-border">
-          <CardContent className="pt-6">
+          <CardContent className="p-4 sm:pt-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Total Entries</p>
-                <p className="font-display text-3xl font-bold text-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-1">Total Entries</p>
+                <p className="font-display text-xl sm:text-3xl font-bold text-foreground">
                   {filteredExpenses.length}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Average: ${(totalFiltered / filteredExpenses.length).toFixed(2)}
+                  Avg: ${(totalFiltered / filteredExpenses.length).toFixed(2)}
                 </p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-4/20">
-                <ShoppingCart className="h-6 w-6 text-chart-4" />
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-chart-4/20 shrink-0">
+                <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 text-chart-4" />
               </div>
             </div>
           </CardContent>
@@ -174,7 +174,7 @@ export default function ExpensesPage() {
 
       {/* Filters */}
       <Card className="border-border">
-        <CardContent className="flex flex-col gap-4 p-4 sm:flex-row">
+        <CardContent className="flex flex-col gap-3 p-3 sm:p-4 sm:flex-row sm:gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -217,20 +217,20 @@ export default function ExpensesPage() {
               const canEditThis = canEdit(expense)
 
               return (
-                <div key={expense.id} className="flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-secondary">
-                  <div className="flex items-center gap-3 flex-1">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-full ${colorClass}`}>
-                      <Icon className="h-5 w-5" />
+                <div key={expense.id} className="flex items-center justify-between rounded-lg p-2 sm:p-3 transition-colors hover:bg-secondary">
+                  <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                    <div className={`flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full shrink-0 ${colorClass}`}>
+                      <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-foreground">{expense.merchant}</p>
-                      <div className="flex items-center gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{expense.merchant}</p>
+                      <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
                         <Badge variant="secondary" className="text-xs capitalize">
                           {expense.category.replace("-", " & ")}
                         </Badge>
-                        <span className="text-xs text-muted-foreground">{expense.date}</span>
+                        <span className="text-xs text-muted-foreground hidden sm:inline">{expense.date}</span>
                         {!canEditThis && (
-                          <Badge variant="outline" className="text-xs text-destructive">
+                          <Badge variant="outline" className="text-xs text-destructive hidden sm:inline-flex">
                             Locked
                           </Badge>
                         )}
@@ -238,7 +238,7 @@ export default function ExpensesPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                     {isEditing ? (
                       <Dialog open={isEditing} onOpenChange={(open) => !open && setEditingId(null)}>
                         <DialogContent>
@@ -266,7 +266,7 @@ export default function ExpensesPage() {
                         </DialogContent>
                       </Dialog>
                     ) : (
-                      <span className="font-medium text-foreground min-w-20 text-right">
+                      <span className="font-medium text-foreground text-sm sm:text-base min-w-16 sm:min-w-20 text-right">
                         ${expense.amount.toFixed(2)}
                       </span>
                     )}

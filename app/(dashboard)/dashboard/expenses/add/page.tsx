@@ -52,18 +52,18 @@ export default function AddExpensePage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild>
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex items-center gap-3 sm:gap-4">
+        <Button variant="ghost" size="icon" asChild className="h-9 w-9 sm:h-10 sm:w-10">
           <Link href="/dashboard/expenses">
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
           </Link>
         </Button>
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground md:text-3xl">
+          <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground md:text-3xl">
             Add Expense
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm sm:text-base text-muted-foreground">
             Manually record a new expense
           </p>
         </div>

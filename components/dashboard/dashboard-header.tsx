@@ -17,11 +17,11 @@ export function DashboardHeader() {
   })
 
   return (
-    <div className="flex flex-col gap-1">
-      <h1 className="font-display text-2xl font-bold text-foreground md:text-3xl">
+    <div className="flex flex-col gap-0.5">
+      <h1 className="font-display text-xl font-bold text-foreground sm:text-2xl md:text-3xl">
         Welcome back, {firstName}
       </h1>
-      <p className="text-muted-foreground">{currentDate}</p>
+      <p className="text-sm sm:text-base text-muted-foreground">{currentDate}</p>
     </div>
   )
 }

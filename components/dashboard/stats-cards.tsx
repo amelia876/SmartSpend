@@ -42,22 +42,22 @@ const stats = [
 
 export function StatsCards() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
       {stats.map((stat) => (
         <Card key={stat.title} className="border-border">
-          <CardContent className="p-5">
+          <CardContent className="p-3 sm:p-5">
             <div className="flex items-start justify-between">
-              <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">{stat.title}</p>
-                <p className="font-display text-2xl font-bold text-foreground">
+              <div className="space-y-0.5 sm:space-y-1 min-w-0 flex-1">
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">{stat.title}</p>
+                <p className="font-display text-lg sm:text-2xl font-bold text-foreground">
                   {stat.value}
                 </p>
                 <div className="flex items-center gap-1">
                   {stat.trend === "up" && (
-                    <TrendingUp className="h-3 w-3 text-chart-2" />
+                    <TrendingUp className="h-3 w-3 text-chart-2 shrink-0" />
                   )}
                   {stat.trend === "down" && (
-                    <TrendingDown className="h-3 w-3 text-destructive" />
+                    <TrendingDown className="h-3 w-3 text-destructive shrink-0" />
                   )}
                   <span
                     className={`text-xs ${
@@ -72,8 +72,8 @@ export function StatsCards() {
                   </span>
                 </div>
               </div>
-              <div className={`rounded-lg p-2.5 ${stat.bgColor}`}>
-                <stat.icon className={`h-5 w-5 ${stat.color}`} />
+              <div className={`rounded-lg p-1.5 sm:p-2.5 ${stat.bgColor} shrink-0`}>
+                <stat.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${stat.color}`} />
               </div>
             </div>
           </CardContent>

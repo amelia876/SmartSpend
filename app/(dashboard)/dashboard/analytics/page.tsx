@@ -54,18 +54,18 @@ export default function AnalyticsPage() {
   const transactionCount = 47
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground md:text-3xl">
+          <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground md:text-3xl">
             Analytics
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm sm:text-base text-muted-foreground">
             Understand your spending patterns and trends
           </p>
         </div>
         <Select defaultValue="april">
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Select period" />
           </SelectTrigger>
           <SelectContent>
@@ -78,19 +78,19 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-3 sm:gap-4 grid-cols-3">
         <Card className="border-border">
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-              <DollarSign className="h-6 w-6 text-primary" />
+          <CardContent className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-3 sm:p-5">
+            <div className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-primary/10 shrink-0">
+              <DollarSign className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Total Spending</p>
-              <div className="flex items-center gap-2">
-                <p className="font-display text-2xl font-bold text-foreground">
+            <div className="min-w-0">
+              <p className="text-xs sm:text-sm text-muted-foreground">Total</p>
+              <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+                <p className="font-display text-lg sm:text-2xl font-bold text-foreground">
                   ${totalSpending.toLocaleString()}
                 </p>
-                <span className="flex items-center text-xs text-chart-2">
+                <span className="hidden sm:flex items-center text-xs text-chart-2">
                   <TrendingDown className="h-3 w-3" />
                   -8%
                 </span>
@@ -100,17 +100,17 @@ export default function AnalyticsPage() {
         </Card>
 
         <Card className="border-border">
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-2/10">
-              <TrendingUp className="h-6 w-6 text-chart-2" />
+          <CardContent className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-3 sm:p-5">
+            <div className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-chart-2/10 shrink-0">
+              <TrendingUp className="h-4 w-4 sm:h-6 sm:w-6 text-chart-2" />
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Daily Average</p>
-              <div className="flex items-center gap-2">
-                <p className="font-display text-2xl font-bold text-foreground">
+            <div className="min-w-0">
+              <p className="text-xs sm:text-sm text-muted-foreground">Daily Avg</p>
+              <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+                <p className="font-display text-lg sm:text-2xl font-bold text-foreground">
                   ${avgDaily}
                 </p>
-                <span className="flex items-center text-xs text-destructive">
+                <span className="hidden sm:flex items-center text-xs text-destructive">
                   <ArrowUpRight className="h-3 w-3" />
                   +5%
                 </span>
@@ -120,13 +120,13 @@ export default function AnalyticsPage() {
         </Card>
 
         <Card className="border-border">
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-4/10">
-              <Receipt className="h-6 w-6 text-chart-4" />
+          <CardContent className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-3 sm:p-5">
+            <div className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-chart-4/10 shrink-0">
+              <Receipt className="h-4 w-4 sm:h-6 sm:w-6 text-chart-4" />
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Transactions</p>
-              <p className="font-display text-2xl font-bold text-foreground">
+            <div className="min-w-0">
+              <p className="text-xs sm:text-sm text-muted-foreground">Transactions</p>
+              <p className="font-display text-lg sm:text-2xl font-bold text-foreground">
                 {transactionCount}
               </p>
             </div>
@@ -135,14 +135,14 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Charts Row */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
         {/* Monthly Trend */}
         <Card className="border-border">
-          <CardHeader className="pb-2">
-            <CardTitle className="font-display text-lg">Monthly Trend</CardTitle>
+          <CardHeader className="pb-2 px-3 sm:px-6">
+            <CardTitle className="font-display text-base sm:text-lg">Monthly Trend</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="h-[280px]">
+          <CardContent className="px-2 sm:px-6">
+            <div className="h-[220px] sm:h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={monthlyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
@@ -172,11 +172,11 @@ export default function AnalyticsPage() {
 
         {/* Spending by Category */}
         <Card className="border-border">
-          <CardHeader className="pb-2">
-            <CardTitle className="font-display text-lg">Spending by Category</CardTitle>
+          <CardHeader className="pb-2 px-3 sm:px-6">
+            <CardTitle className="font-display text-base sm:text-lg">Spending by Category</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="h-[280px]">
+          <CardContent className="px-2 sm:px-6">
+            <div className="h-[220px] sm:h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -215,11 +215,11 @@ export default function AnalyticsPage() {
 
       {/* Weekly Comparison */}
       <Card className="border-border">
-        <CardHeader className="pb-2">
-          <CardTitle className="font-display text-lg">Weekly Comparison</CardTitle>
+        <CardHeader className="pb-2 px-3 sm:px-6">
+          <CardTitle className="font-display text-base sm:text-lg">Weekly Comparison</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="h-[280px]">
+        <CardContent className="px-2 sm:px-6">
+          <div className="h-[220px] sm:h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={weeklyComparison} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.9 0.01 250)" />
