@@ -101,7 +101,6 @@ export default function SignupPage() {
       businessName: formData.businessName || undefined,
       businessType: formData.industry || undefined,
     }
-    console.log("[v0] Submitting signup with profile:", profileData)
 
     try {
       await signUp(formData.email, formData.password, profileData)
