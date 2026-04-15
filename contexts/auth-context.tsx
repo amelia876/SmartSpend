@@ -127,7 +127,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       userProfile.businessType = profile.businessType
     }
 
-    await setDoc(doc(db, "users", uid), firestoreData)
+    // Try to save profile to Firestore with a timeout
+    // Don't block signup if Firestore write fails (e.g., offline)
+    try {
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Firestore timeout")), 5000)
+      )
+      await Promise.race([
+        setDoc(doc(db, "users", uid), firestoreData),
+        timeoutPromise
+      ])
+    } catch (firestoreError) {
+      // Log error but don't throw - user is authenticated, profile will sync later
+      console.error("[v0] Firestore profile write failed (will retry on next load):", firestoreError)
+    }
 
     setUserProfile(userProfile)
   }

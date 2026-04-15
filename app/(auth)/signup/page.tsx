@@ -93,7 +93,6 @@ export default function SignupPage() {
     setErrors({})
 
     try {
-      console.log("[v0] Starting signup...")
       await signUp(formData.email, formData.password, {
         email: formData.email,
         name: formData.name,
@@ -103,11 +102,9 @@ export default function SignupPage() {
         businessName: formData.businessName || undefined,
         businessType: formData.industry || undefined,
       })
-      console.log("[v0] Signup successful, redirecting...")
-      // Use replace to prevent back button going to signup
+      // Signup successful - redirect to dashboard
       router.replace("/dashboard")
     } catch (error: unknown) {
-      console.error("[v0] Signup error:", error)
       const firebaseError = error as { code?: string; message?: string }
       if (firebaseError.code === "auth/email-already-in-use") {
         setErrors({ email: "This email is already registered" })
@@ -116,6 +113,7 @@ export default function SignupPage() {
       } else {
         setErrors({ general: firebaseError.message || "An error occurred. Please try again." })
       }
+    } finally {
       setIsLoading(false)
     }
   }
