@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select"
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
-import { ArrowLeft, DollarSign, Store, Calendar, Tag, FileText, Crown, Zap, Lock, BarChart3 } from "lucide-react"
+import { ArrowLeft, DollarSign, Store, Calendar, Tag, FileText, Crown, Check } from "lucide-react"
 
 const FREE_EXPENSE_LIMIT = 3
 // In a real app this count would come from the database
@@ -75,49 +75,73 @@ export default function AddExpensePage() {
           </div>
         </div>
 
-        <Card className="max-w-md border-border">
-          <CardContent className="flex flex-col items-center text-center p-8 gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500">
-              <Crown className="h-8 w-8 text-white" />
+        <div className="flex items-start justify-center pt-4 sm:pt-8">
+          <Card className="w-full max-w-sm border-border overflow-hidden shadow-lg">
+            {/* Amber gradient header band */}
+            <div
+              className="flex flex-col items-center gap-3 px-6 py-8 text-white"
+              style={{ background: "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)" }}
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
+                <Crown className="h-7 w-7 text-white" />
+              </div>
+              <div className="text-center">
+                <p className="text-xs font-semibold uppercase tracking-widest text-white/70 mb-1">Free Plan</p>
+                <h2 className="font-display text-2xl font-bold text-white">
+                  Limit Reached
+                </h2>
+                <p className="text-sm text-white/80 mt-1">
+                  {FREE_EXPENSE_LIMIT} of {FREE_EXPENSE_LIMIT} expenses used
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="font-display text-xl font-bold text-foreground mb-1">
-                Expense Limit Reached
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                You&apos;ve used all <span className="font-semibold text-foreground">{FREE_EXPENSE_LIMIT} free expenses</span>. Upgrade to Pro to add unlimited expenses.
+
+            {/* Body */}
+            <CardContent className="p-6 space-y-5">
+              <p className="text-sm text-muted-foreground text-center">
+                Upgrade to <span className="font-semibold text-foreground">SmartSpend Pro</span> for unlimited expenses and more powerful features.
               </p>
-            </div>
-            <div className="w-full rounded-lg border border-border bg-secondary/30 p-4 text-left space-y-2">
-              <p className="text-xs font-semibold text-foreground">Pro includes:</p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Zap className="h-3.5 w-3.5 text-primary shrink-0" />
-                Unlimited expense entries
+
+              {/* Perks list */}
+              <ul className="space-y-3">
+                {[
+                  "Unlimited expense entries",
+                  "Advanced analytics dashboard",
+                  "Edit expenses anytime",
+                  "Unlimited receipt scans",
+                ].map((perk) => (
+                  <li key={perk} className="flex items-center gap-3 text-sm text-foreground">
+                    <span
+                      className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+                      style={{ background: "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)" }}
+                    >
+                      <Check className="h-3 w-3 text-white" />
+                    </span>
+                    {perk}
+                  </li>
+                ))}
+              </ul>
+
+              {/* Divider */}
+              <div className="border-t border-border" />
+
+              {/* Actions */}
+              <div className="flex flex-col gap-2">
+                <Button
+                  onClick={() => router.push("/dashboard/upgrade")}
+                  className="w-full gap-2 font-semibold"
+                  style={{ background: "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)" }}
+                >
+                  <Crown className="h-4 w-4" />
+                  Upgrade to Pro
+                </Button>
+                <Button variant="ghost" asChild className="w-full text-muted-foreground">
+                  <Link href="/dashboard/expenses">Maybe later</Link>
+                </Button>
               </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <BarChart3 className="h-3.5 w-3.5 text-primary shrink-0" />
-                Advanced analytics dashboard
-              </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Lock className="h-3.5 w-3.5 text-primary shrink-0" />
-                Edit expenses anytime
-              </div>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-2 w-full">
-              <Button variant="outline" asChild className="flex-1">
-                <Link href="/dashboard/expenses">Go Back</Link>
-              </Button>
-              <Button
-                onClick={() => router.push("/dashboard/upgrade")}
-                className="flex-1 gap-2"
-                style={{ background: "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)" }}
-              >
-                <Crown className="h-4 w-4" />
-                Upgrade Now
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     )
   }
