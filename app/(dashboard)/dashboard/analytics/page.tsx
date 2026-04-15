@@ -58,86 +58,87 @@ export default function AnalyticsPage() {
   const transactionCount = 47
 
   if (!isPro) {
+    const features = [
+      { icon: BarChart3, label: "Monthly trend charts", desc: "Visualize spending patterns over time with interactive charts." },
+      { icon: TrendingUp, label: "Spending breakdown", desc: "See exactly where your money goes by category." },
+      { icon: Zap, label: "Weekly comparisons", desc: "Compare week-over-week and month-over-month spending." },
+      { icon: Lock, label: "Export reports", desc: "Download your data as PDF or CSV anytime." },
+    ]
+
     return (
       <div className="space-y-4 md:space-y-6">
-        <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground md:text-3xl">
-            Analytics
-          </h1>
-          <p className="text-sm sm:text-base text-muted-foreground">
-            Understand your spending patterns and trends
-          </p>
-        </div>
+        {/* Full-page two-column layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 lg:min-h-[calc(100vh-12rem)]">
 
-        {/* Blurred preview + upgrade overlay */}
-        <div className="relative rounded-xl overflow-hidden">
-          {/* Blurred background charts (decorative) */}
-          <div className="pointer-events-none select-none blur-sm opacity-40 space-y-4">
-            <div className="grid gap-3 grid-cols-3">
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="border-border">
-                  <CardContent className="p-4">
-                    <div className="h-4 w-16 bg-muted rounded mb-2" />
-                    <div className="h-8 w-24 bg-muted rounded" />
-                  </CardContent>
-                </Card>
-              ))}
+          {/* LEFT — hero panel */}
+          <div
+            className="flex flex-col justify-between rounded-2xl p-6 sm:p-10 text-white"
+            style={{ background: "linear-gradient(145deg, #f59e0b 0%, #ea580c 100%)" }}
+          >
+            <div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 mb-6">
+                <Crown className="h-6 w-6 text-white" />
+              </div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-white/60 mb-2">
+                Pro Feature
+              </p>
+              <h1 className="font-display text-3xl sm:text-4xl font-bold text-white leading-tight mb-3">
+                Unlock powerful<br />spending analytics.
+              </h1>
+              <p className="text-base text-white/80 leading-relaxed max-w-sm">
+                Free accounts don&apos;t include analytics. Upgrade to Pro to access charts, trends, category breakdowns, and exportable reports.
+              </p>
             </div>
-            <div className="grid gap-4 lg:grid-cols-2">
-              <Card className="border-border">
-                <CardContent className="p-4">
-                  <div className="h-[180px] bg-muted/50 rounded" />
-                </CardContent>
-              </Card>
-              <Card className="border-border">
-                <CardContent className="p-4">
-                  <div className="h-[180px] bg-muted/50 rounded" />
-                </CardContent>
-              </Card>
+
+            {/* Decorative chart preview */}
+            <div className="mt-10 bg-white/10 rounded-xl p-4">
+              <div className="flex items-end justify-between gap-2 h-24">
+                {[40, 65, 45, 80, 55, 70, 90].map((h, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 bg-white/30 rounded-t"
+                    style={{ height: `${h}%` }}
+                  />
+                ))}
+              </div>
+              <p className="text-xs text-white/60 mt-3 text-center">Sample monthly spending trend</p>
             </div>
-            <Card className="border-border">
-              <CardContent className="p-4">
-                <div className="h-[180px] bg-muted/50 rounded" />
-              </CardContent>
-            </Card>
           </div>
 
-          {/* Upgrade overlay */}
-          <div className="absolute inset-0 flex items-center justify-center bg-background/70 backdrop-blur-sm">
-            <div className="text-center px-6 py-8 max-w-sm mx-auto">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 mx-auto mb-4">
-                <Crown className="h-8 w-8 text-white" />
-              </div>
-              <h2 className="font-display text-xl font-bold text-foreground mb-2">
-                Analytics is a Pro Feature
+          {/* RIGHT — features + CTA */}
+          <div className="flex flex-col justify-between">
+            <div>
+              <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-1">
+                Analytics
               </h2>
               <p className="text-sm text-muted-foreground mb-6">
-                Unlock detailed spending charts, category breakdowns, and weekly comparisons with a Pro subscription.
+                Understand your spending patterns and make smarter decisions.
               </p>
-              <div className="space-y-2 text-left mb-6 bg-card border border-border rounded-lg p-4">
-                <p className="text-xs font-semibold text-foreground mb-2">What you&apos;ll get:</p>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <BarChart3 className="h-3.5 w-3.5 text-primary shrink-0" />
-                    Monthly trend charts and comparisons
+
+              <div className="space-y-3">
+                {features.map(({ icon: Icon, label, desc }) => (
+                  <div key={label} className="flex items-start gap-4 rounded-xl border border-border bg-card p-4">
+                    <div
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
+                      style={{ background: "linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%)" }}
+                    >
+                      <Icon className="h-4 w-4 text-orange-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{label}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <PieChart className="h-3.5 w-3.5 text-primary shrink-0" />
-                    Spending breakdown by category
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Zap className="h-3.5 w-3.5 text-primary shrink-0" />
-                    Weekly comparisons and averages
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Lock className="h-3.5 w-3.5 text-primary shrink-0" />
-                    Export reports as PDF or CSV
-                  </div>
-                </div>
+                ))}
               </div>
+            </div>
+
+            {/* CTAs */}
+            <div className="mt-6 flex flex-col gap-3">
               <Button
                 asChild
-                className="w-full gap-2"
+                size="lg"
+                className="w-full gap-2 font-semibold text-base"
                 style={{ background: "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)" }}
               >
                 <Link href="/dashboard/upgrade">
@@ -145,7 +146,7 @@ export default function AnalyticsPage() {
                   Upgrade to Pro
                 </Link>
               </Button>
-              <p className="text-xs text-muted-foreground mt-3">
+              <p className="text-xs text-muted-foreground text-center">
                 Already on Pro?{" "}
                 <Link href="/dashboard/settings" className="text-primary hover:underline">
                   Check your account
@@ -153,6 +154,7 @@ export default function AnalyticsPage() {
               </p>
             </div>
           </div>
+
         </div>
       </div>
     )
