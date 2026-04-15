@@ -49,7 +49,7 @@ const colorMap: Record<string, string> = {
   other: "bg-muted text-muted-foreground",
 }
 
-const expenses = [
+const initialExpenses = [
   { id: 1, merchant: "Whole Foods", category: "groceries", amount: 67.42, date: "Apr 14, 2026", createdAt: new Date("2026-04-14") },
   { id: 2, merchant: "Uber", category: "transport", amount: 12.50, date: "Apr 14, 2026", createdAt: new Date("2026-04-14") },
   { id: 3, merchant: "Starbucks", category: "food-drink", amount: 6.75, date: "Apr 13, 2026", createdAt: new Date("2026-04-13") },
@@ -66,6 +66,7 @@ const FREE_EXPENSE_LIMIT = 3
 
 export default function ExpensesPage() {
   const router = useRouter()
+  const [expenses, setExpenses] = useState(initialExpenses)
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -103,6 +104,10 @@ export default function ExpensesPage() {
   const saveEdit = () => {
     // In a real app, this would save to the database
     setEditingId(null)
+  }
+
+  const handleDelete = (id: number) => {
+    setExpenses(expenses.filter((e) => e.id !== id))
   }
 
   return (
@@ -324,7 +329,10 @@ export default function ExpensesPage() {
                           )}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive">
+                        <DropdownMenuItem 
+                          className="text-destructive"
+                          onClick={() => handleDelete(expense.id)}
+                        >
                           <Trash2 className="mr-2 h-4 w-4" />
                           Delete
                         </DropdownMenuItem>
