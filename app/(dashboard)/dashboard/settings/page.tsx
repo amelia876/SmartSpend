@@ -18,16 +18,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useAuth } from "@/contexts/auth-context"
-import { User, Bell, Shield, CreditCard, Crown, Users, Mail, X, Check, Clock } from "lucide-react"
+import { User, Bell, Shield, CreditCard, Crown, Users, Mail, X, Check, Clock, Zap, Lock, BarChart3 } from "lucide-react"
 
-const mockTeamMembers = [
-  { id: 1, name: "Sarah Johnson", email: "sarah@company.com", role: "Admin", status: "active" },
-  { id: 2, name: "Mike Chen", email: "mike@company.com", role: "Member", status: "active" },
-  { id: 3, email: "pending@company.com", role: "Member", status: "pending" },
-]
+const FREE_TEAM_LIMIT = 2
+
+// Start with empty team for demo - business owner can invite up to 2 for free
+const mockTeamMembers: { id: number; name?: string; email: string; role: string; status: string }[] = []
 
 export default function SettingsPage() {
-  const { user, userProfile, updateProfile } = useAuth()
+  const { user, userProfile, updateProfile, upgradeToPro, downgradeToFree } = useAuth()
 
   const [isLoading, setIsLoading] = useState(false)
   const [saveError, setSaveError] = useState("")
@@ -49,6 +48,7 @@ export default function SettingsPage() {
 
   const [teamMembers, setTeamMembers] = useState(mockTeamMembers)
   const [showInviteDialog, setShowInviteDialog] = useState(false)
+  const [showTeamUpgradeDialog, setShowTeamUpgradeDialog] = useState(false)
   const [inviteEmail, setInviteEmail] = useState("")
   const [inviteError, setInviteError] = useState("")
   const [isInviting, setIsInviting] = useState(false)
@@ -93,6 +93,15 @@ export default function SettingsPage() {
   const isBusiness = userProfile?.role === "business"
   const isStudent = userProfile?.role === "student"
   const isPro = userProfile?.isPro === true
+  const isAtTeamLimit = !isPro && teamMembers.length >= FREE_TEAM_LIMIT
+
+  const handleInviteClick = () => {
+    if (isAtTeamLimit) {
+      setShowTeamUpgradeDialog(true)
+    } else {
+      setShowInviteDialog(true)
+    }
+  }
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -248,7 +257,29 @@ export default function SettingsPage() {
                 </p>
               </div>
             </div>
-            {!isPro && (
+            {isPro ? (
+              <div className="rounded-lg border border-chart-2/50 bg-chart-2/5 p-4">
+                <div className="mb-3 flex items-center gap-2">
+                  <Crown className="h-5 w-5 text-chart-2" />
+                  <p className="font-semibold text-foreground">You&apos;re on Pro!</p>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Enjoy unlimited scans, advanced analytics, and all premium features.
+                </p>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Want to test free experience?
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={downgradeToFree}
+                  >
+                    Downgrade (Demo)
+                  </Button>
+                </div>
+              </div>
+            ) : (
               <div className="rounded-lg border border-primary/50 bg-primary/5 p-4">
                 <div className="mb-3 flex items-center gap-2">
                   <Crown className="h-5 w-5 text-primary" />
@@ -304,54 +335,88 @@ export default function SettingsPage() {
               <div className="flex items-center gap-2">
                 <Users className="h-5 w-5 text-primary" />
                 <CardTitle className="font-display text-lg">Team Management</CardTitle>
+                {!isPro && (
+                  <Badge variant="outline" className="text-xs text-muted-foreground">
+                    {teamMembers.length}/{FREE_TEAM_LIMIT} free
+                  </Badge>
+                )}
               </div>
-              <Button onClick={() => setShowInviteDialog(true)} className="gap-2">
-                <Mail className="h-4 w-4" />
+              <Button 
+                onClick={handleInviteClick} 
+                className="gap-2"
+                variant={isAtTeamLimit ? "outline" : "default"}
+              >
+                {isAtTeamLimit ? (
+                  <Crown className="h-4 w-4 text-amber-500" />
+                ) : (
+                  <Mail className="h-4 w-4" />
+                )}
                 Invite Member
               </Button>
             </div>
-            <CardDescription>Manage your organization members and send invitations</CardDescription>
+            <CardDescription>
+              {isPro 
+                ? "Manage your organization members and send invitations" 
+                : `Invite up to ${FREE_TEAM_LIMIT} team members for free. Upgrade to Pro for unlimited.`
+              }
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {teamMembers.map((member) => (
-                <div
-                  key={member.id}
-                  className="flex items-center justify-between rounded-lg border border-border p-4"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                      <User className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">{member.name || member.email}</p>
-                      {member.name && <p className="text-sm text-muted-foreground">{member.email}</p>}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {member.status === "pending" ? (
-                      <Badge variant="outline" className="gap-1 text-chart-4">
-                        <Clock className="h-3 w-3" />
-                        Pending
-                      </Badge>
-                    ) : (
-                      <Badge variant="secondary" className="gap-1">
-                        <Check className="h-3 w-3" />
-                        {member.role}
-                      </Badge>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                      onClick={() => setTeamMembers(teamMembers.filter((m) => m.id !== member.id))}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
+            {teamMembers.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted mb-3">
+                  <Users className="h-6 w-6 text-muted-foreground" />
                 </div>
-              ))}
-            </div>
+                <p className="font-medium text-foreground mb-1">No team members yet</p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Invite colleagues to collaborate on expense tracking
+                </p>
+                <Button onClick={handleInviteClick} variant="outline" className="gap-2">
+                  <Mail className="h-4 w-4" />
+                  Send First Invite
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {teamMembers.map((member) => (
+                  <div
+                    key={member.id}
+                    className="flex items-center justify-between rounded-lg border border-border p-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                        <User className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">{member.name || member.email}</p>
+                        {member.name && <p className="text-sm text-muted-foreground">{member.email}</p>}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {member.status === "pending" ? (
+                        <Badge variant="outline" className="gap-1 text-chart-4">
+                          <Clock className="h-3 w-3" />
+                          Pending
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary" className="gap-1">
+                          <Check className="h-3 w-3" />
+                          {member.role}
+                        </Badge>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                        onClick={() => setTeamMembers(teamMembers.filter((m) => m.id !== member.id))}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
@@ -401,6 +466,70 @@ export default function SettingsPage() {
               disabled={isInviting}
             >
               {isInviting ? <><Spinner className="mr-2 h-4 w-4" />Sending...</> : "Send Invitation"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Team Upgrade Dialog */}
+      <Dialog open={showTeamUpgradeDialog} onOpenChange={setShowTeamUpgradeDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500">
+                <Crown className="h-6 w-6 text-white" />
+              </div>
+              <DialogTitle className="text-xl">Upgrade to Pro</DialogTitle>
+            </div>
+            <DialogDescription className="text-left">
+              You&apos;ve reached the <span className="font-semibold text-foreground">{FREE_TEAM_LIMIT} team member limit</span> for free business accounts.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+              <p className="text-sm text-foreground font-medium mb-3">With Pro, your business gets:</p>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-primary shrink-0" />
+                  Unlimited team members
+                </li>
+                <li className="flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4 text-primary shrink-0" />
+                  Team spending analytics
+                </li>
+                <li className="flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-primary shrink-0" />
+                  Unlimited receipt scans for all members
+                </li>
+                <li className="flex items-center gap-2">
+                  <Lock className="h-4 w-4 text-primary shrink-0" />
+                  Advanced permissions and roles
+                </li>
+              </ul>
+            </div>
+            <p className="text-xs text-muted-foreground text-center">
+              Free business accounts are limited to {FREE_TEAM_LIMIT} team members.
+            </p>
+          </div>
+
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowTeamUpgradeDialog(false)}
+              className="w-full sm:w-auto"
+            >
+              Maybe Later
+            </Button>
+            <Button
+              asChild
+              className="w-full sm:w-auto gap-2"
+              style={{ background: "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)" }}
+            >
+              <Link href="/dashboard/upgrade">
+                <Crown className="h-4 w-4" />
+                Upgrade Now
+              </Link>
             </Button>
           </DialogFooter>
         </DialogContent>

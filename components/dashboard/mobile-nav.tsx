@@ -21,12 +21,12 @@ import {
 } from "lucide-react"
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Scan Receipt", href: "/dashboard/scan", icon: Camera },
-  { name: "Expenses", href: "/dashboard/expenses", icon: Receipt },
-  { name: "Budgets", href: "/dashboard/budgets", icon: PieChart },
-  { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, pro: false },
+  { name: "Scan Receipt", href: "/dashboard/scan", icon: Camera, pro: false },
+  { name: "Expenses", href: "/dashboard/expenses", icon: Receipt, pro: false },
+  { name: "Budgets", href: "/dashboard/budgets", icon: PieChart, pro: false },
+  { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3, pro: true },
+  { name: "Settings", href: "/dashboard/settings", icon: Settings, pro: false },
 ]
 
 export function MobileNav() {
@@ -51,7 +51,7 @@ export function MobileNav() {
   }
 
   return (
-    <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-border bg-card px-4 lg:hidden">
+    <header className="sticky top-0 z-50 flex h-14 items-center justify-between border-b border-border bg-card px-4 lg:hidden">
       <Link href="/dashboard" className="flex items-center gap-2">
         <Image
           src="/images/logo.png"
@@ -91,6 +91,7 @@ export function MobileNav() {
             <nav className="flex-1 space-y-1 p-4">
               {navigation.map((item) => {
                 const isActive = pathname === item.href
+                const isLocked = item.pro && !userProfile?.isPro
                 return (
                   <Link
                     key={item.name}
@@ -103,8 +104,11 @@ export function MobileNav() {
                         : "text-foreground hover:bg-accent hover:text-accent-foreground"
                     )}
                   >
-                    <item.icon className="h-5 w-5" />
-                    {item.name}
+                    <item.icon className="h-5 w-5 shrink-0" />
+                    <span className="flex-1">{item.name}</span>
+                    {isLocked && (
+                      <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                    )}
                   </Link>
                 )
               })}

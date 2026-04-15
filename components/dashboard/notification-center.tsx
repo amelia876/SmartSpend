@@ -129,16 +129,16 @@ export function NotificationCenter() {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5 text-muted-foreground" />
+        <Button variant="ghost" size="icon" className="relative h-8 w-8 sm:h-9 sm:w-9">
+          <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+            <span className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-primary text-[10px] sm:text-xs font-bold text-primary-foreground">
               {unreadCount > 9 ? "9+" : unreadCount}
             </span>
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-96">
+      <DropdownMenuContent align="end" className="w-[calc(100vw-2rem)] sm:w-96 max-w-96">
         <div className="flex items-center justify-between px-4 py-3 border-b">
           <h2 className="font-semibold text-foreground">Notifications</h2>
           {unreadCount > 0 && (

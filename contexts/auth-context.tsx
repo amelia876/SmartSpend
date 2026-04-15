@@ -35,6 +35,8 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<void>
   refreshProfile: () => Promise<void>
   updateProfile: (data: Partial<Pick<UserProfile, "name" | "country" | "institution" | "businessName" | "businessType">>) => Promise<void>
+  upgradeToPro: () => Promise<void>
+  downgradeToFree: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -46,29 +48,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Function to fetch user profile
   const fetchUserProfile = async (uid: string) => {
+    const cacheKey = `smartspend_profile_${uid}`
+    
+    // First, try to load from localStorage immediately (for fast UI)
+    let cachedProfile: UserProfile | null = null
+    try {
+      const cached = localStorage.getItem(cacheKey)
+      if (cached) {
+        const data = JSON.parse(cached)
+        cachedProfile = { ...data, createdAt: new Date(data.createdAt) } as UserProfile
+        setUserProfile(cachedProfile)
+      }
+    } catch {}
+
+    // Then try Firestore to get the latest data
     try {
       const profileDoc = await getDoc(doc(db, "users", uid))
       if (profileDoc.exists()) {
         const data = profileDoc.data()
-        setUserProfile({
+        const profile = {
           ...data,
           createdAt: data.createdAt?.toDate?.() || new Date(),
-        } as UserProfile)
+        } as UserProfile
+        setUserProfile(profile)
+        // Update localStorage cache
+        try {
+          localStorage.setItem(cacheKey, JSON.stringify({ ...profile, createdAt: profile.createdAt.toISOString() }))
+        } catch {}
+      } else if (!cachedProfile) {
+        // No Firestore doc and no cache - profile doesn't exist
+        setUserProfile(null)
       }
-    } catch (error) {
-      console.error("[v0] Error fetching user profile:", error)
-      // Don't throw - profile fetch failing shouldn't break the app
+    } catch {
+      // Firestore failed - we already set profile from cache above if it existed
     }
   }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      console.log("[v0] Auth state changed:", firebaseUser?.email || "no user")
       setUser(firebaseUser)
       
       if (firebaseUser) {
-        // Fetch profile in background, don't block loading state
-        fetchUserProfile(firebaseUser.uid)
+        // Await profile fetch so userProfile is populated before loading = false
+        await fetchUserProfile(firebaseUser.uid)
       } else {
         setUserProfile(null)
       }
@@ -127,12 +149,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       userProfile.businessType = profile.businessType
     }
 
-    await setDoc(doc(db, "users", uid), firestoreData)
+    // Try to save profile to Firestore with a timeout
+    // Don't block signup if Firestore write fails (e.g., offline)
+    try {
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Firestore timeout")), 5000)
+      )
+      await Promise.race([
+        setDoc(doc(db, "users", uid), firestoreData),
+        timeoutPromise
+      ])
+    } catch {
+      // Firestore failed - profile is cached locally and will work offline
+    }
 
     setUserProfile(userProfile)
+    // Cache to localStorage so profile survives browser restarts
+    try {
+      localStorage.setItem(`smartspend_profile_${uid}`, JSON.stringify({ ...userProfile, createdAt: userProfile.createdAt.toISOString() }))
+    } catch {}
   }
 
   const signOut = async () => {
+    // Don't clear sessionStorage cache - keep it so profile persists across logins
+    // when Firestore is offline. The cache is keyed by uid, so switching users
+    // will naturally use a different cache key.
     await firebaseSignOut(auth)
     setUserProfile(null)
   }
@@ -166,6 +207,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUserProfile((prev) => (prev ? { ...prev, ...data } : prev))
   }
 
+  // Demo function to upgrade to Pro (for demonstration purposes)
+  const upgradeToPro = async () => {
+    if (!user) throw new Error("No user logged in")
+
+    try {
+      await updateDoc(doc(db, "users", user.uid), { isPro: true })
+    } catch (error) {
+      console.error("[v0] Failed to update Firestore:", error)
+    }
+
+    setUserProfile((prev) => {
+      const updated = prev ? { ...prev, isPro: true } : prev
+      if (updated) {
+        try { localStorage.setItem(`smartspend_profile_${user.uid}`, JSON.stringify({ ...updated, createdAt: updated.createdAt.toISOString() })) } catch {}
+      }
+      return updated
+    })
+  }
+
+  // Demo function to downgrade to Free (for demonstration purposes)
+  const downgradeToFree = async () => {
+    if (!user) throw new Error("No user logged in")
+
+    try {
+      await updateDoc(doc(db, "users", user.uid), { isPro: false })
+    } catch (error) {
+      console.error("[v0] Failed to update Firestore:", error)
+    }
+
+    setUserProfile((prev) => {
+      const updated = prev ? { ...prev, isPro: false } : prev
+      if (updated) {
+        try { localStorage.setItem(`smartspend_profile_${user.uid}`, JSON.stringify({ ...updated, createdAt: updated.createdAt.toISOString() })) } catch {}
+      }
+      return updated
+    })
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -178,6 +257,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         resetPassword,
         refreshProfile,
         updateProfile,
+        upgradeToPro,
+        downgradeToFree,
       }}
     >
       {children}

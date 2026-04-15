@@ -42,14 +42,14 @@ export function BudgetCard({ budget, onDelete, onEdit }: BudgetCardProps) {
   const Icon = iconMap[budget.icon] || Folder
 
   return (
-    <Card className={`border-border transition-all hover:shadow-lg hover:scale-105 ${isOverBudget ? "border-destructive/50 border-2" : ""}`}>
-      <CardHeader className="flex flex-row items-start justify-between pb-2">
-        <div className="flex items-center gap-3">
-          <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${budget.color}/20`}>
-            <Icon className={`h-5 w-5 ${budget.color.replace("bg-", "text-")}`} />
+    <Card className={`border-border transition-all hover:shadow-lg ${isOverBudget ? "border-destructive/50 border-2" : ""}`}>
+      <CardHeader className="flex flex-row items-start justify-between pb-2 p-3 sm:p-6">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className={`flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg ${budget.color}/20 shrink-0`}>
+            <Icon className={`h-4 w-4 sm:h-5 sm:w-5 ${budget.color.replace("bg-", "text-")}`} />
           </div>
-          <div>
-            <h3 className="font-semibold text-foreground">{budget.category}</h3>
+          <div className="min-w-0">
+            <h3 className="font-semibold text-foreground text-sm sm:text-base truncate">{budget.category}</h3>
             <p className="text-xs text-muted-foreground">
               {percentage}% used
             </p>
@@ -57,7 +57,7 @@ export function BudgetCard({ budget, onDelete, onEdit }: BudgetCardProps) {
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8 shrink-0">
               <MoreVertical className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -75,18 +75,18 @@ export function BudgetCard({ budget, onDelete, onEdit }: BudgetCardProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 sm:space-y-4 p-3 sm:p-6 pt-0 sm:pt-0">
         <div className="flex items-end justify-between">
           <div>
-            <p className="font-display text-2xl font-bold text-foreground">
+            <p className="font-display text-lg sm:text-2xl font-bold text-foreground">
               ${budget.spent.toFixed(2)}
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               of ${budget.limit.toFixed(2)}
             </p>
           </div>
           <div className="text-right">
-            <p className={`text-sm font-medium ${remaining >= 0 ? "text-chart-2" : "text-destructive"}`}>
+            <p className={`text-xs sm:text-sm font-medium ${remaining >= 0 ? "text-chart-2" : "text-destructive"}`}>
               {remaining >= 0 ? `$${remaining.toFixed(2)} left` : `$${Math.abs(remaining).toFixed(2)} over`}
             </p>
           </div>

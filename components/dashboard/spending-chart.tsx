@@ -24,11 +24,11 @@ const data = [
 export function SpendingChart() {
   return (
     <Card className="border-border">
-      <CardHeader className="pb-2">
-        <CardTitle className="font-display text-lg">Weekly Spending</CardTitle>
+      <CardHeader className="pb-2 px-3 sm:px-6">
+        <CardTitle className="font-display text-base sm:text-lg">Weekly Spending</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="h-[280px] w-full">
+      <CardContent className="px-2 sm:px-6">
+        <div className="h-[200px] sm:h-[280px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>

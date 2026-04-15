@@ -28,16 +28,17 @@ const budgets = [
 export function BudgetOverview() {
   return (
     <Card className="border-border">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="font-display text-lg">Budget Overview</CardTitle>
-        <Button variant="ghost" size="sm" asChild className="gap-1 text-primary">
+      <CardHeader className="flex flex-row items-center justify-between pb-2 px-3 sm:px-6">
+        <CardTitle className="font-display text-base sm:text-lg">Budget Overview</CardTitle>
+        <Button variant="ghost" size="sm" asChild className="gap-1 text-primary text-xs sm:text-sm">
           <Link href="/dashboard/budgets">
-            View All
-            <ArrowRight className="h-4 w-4" />
+            <span className="hidden sm:inline">View All</span>
+            <span className="sm:hidden">All</span>
+            <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
           </Link>
         </Button>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 sm:space-y-4 px-3 sm:px-6">
         {budgets.map((budget) => {
           const percentage = Math.round((budget.spent / budget.limit) * 100)
           const isOverBudget = percentage >= 90

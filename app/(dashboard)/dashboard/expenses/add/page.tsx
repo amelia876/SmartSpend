@@ -16,7 +16,12 @@ import {
 } from "@/components/ui/select"
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
-import { ArrowLeft, DollarSign, Store, Calendar, Tag, FileText } from "lucide-react"
+import { ArrowLeft, DollarSign, Store, Calendar, Tag, FileText, Crown, Check, Zap, BarChart3, Lock } from "lucide-react"
+import { useAuth } from "@/contexts/auth-context"
+
+const FREE_EXPENSE_LIMIT = 3
+// In a real app this count would come from the database
+const CURRENT_EXPENSE_COUNT = 10
 
 const categories = [
   { value: "groceries", label: "Groceries" },
@@ -32,6 +37,8 @@ const categories = [
 
 export default function AddExpensePage() {
   const router = useRouter()
+  const { userProfile } = useAuth()
+  const isPro = userProfile?.isPro ?? false
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     merchant: "",
@@ -41,29 +48,138 @@ export default function AddExpensePage() {
     notes: "",
   })
 
+  // Free users are limited to FREE_EXPENSE_LIMIT expenses
+  const isAtLimit = !isPro && CURRENT_EXPENSE_COUNT >= FREE_EXPENSE_LIMIT
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-
-    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000))
-
     router.push("/dashboard/expenses")
   }
 
+  if (isAtLimit) {
+    const perks = [
+      { icon: Zap, label: "Unlimited expense entries", desc: "Track as many expenses as you need, no caps." },
+      { icon: BarChart3, label: "Advanced analytics", desc: "Charts, trends, and weekly breakdowns." },
+      { icon: Lock, label: "Edit expenses anytime", desc: "No 24-hour lock — full control over your data." },
+      { icon: DollarSign, label: "Unlimited receipt scans", desc: "Scan and extract receipts without daily limits." },
+    ]
+
+    return (
+      <div className="space-y-4 md:space-y-6">
+        {/* Back header */}
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" asChild className="h-9 w-9">
+            <Link href="/dashboard/expenses">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          </Button>
+          <p className="text-sm text-muted-foreground">Back to Expenses</p>
+        </div>
+
+        {/* Full-page two-column layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 lg:min-h-[calc(100vh-12rem)]">
+
+          {/* LEFT — hero panel */}
+          <div
+            className="flex flex-col justify-between rounded-2xl p-6 sm:p-10 text-white"
+            style={{ background: "linear-gradient(145deg, #f59e0b 0%, #ea580c 100%)" }}
+          >
+            <div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 mb-6">
+                <Crown className="h-6 w-6 text-white" />
+              </div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-white/60 mb-2">
+                Free Plan Limit
+              </p>
+              <h1 className="font-display text-3xl sm:text-4xl font-bold text-white leading-tight mb-3">
+                You&apos;ve hit your<br />expense limit.
+              </h1>
+              <p className="text-base text-white/80 leading-relaxed max-w-sm">
+                Free accounts are limited to {FREE_EXPENSE_LIMIT} expenses. Upgrade to Pro and take full control of your finances with no restrictions.
+              </p>
+            </div>
+
+            {/* Usage bar */}
+            <div className="mt-10">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm font-medium text-white/80">Expenses used</p>
+                <p className="text-sm font-bold text-white">{FREE_EXPENSE_LIMIT}/{FREE_EXPENSE_LIMIT}</p>
+              </div>
+              <div className="h-2 w-full rounded-full bg-white/20">
+                <div className="h-2 w-full rounded-full bg-white" />
+              </div>
+              <p className="text-xs text-white/60 mt-2">100% of your free allocation used</p>
+            </div>
+          </div>
+
+          {/* RIGHT — perks + CTA */}
+          <div className="flex flex-col justify-between">
+            <div>
+              <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-1">
+                Upgrade to SmartSpend Pro
+              </h2>
+              <p className="text-sm text-muted-foreground mb-6">
+                Everything in Free, plus the tools serious budgeters need.
+              </p>
+
+              <div className="space-y-3">
+                {perks.map(({ icon: Icon, label, desc }) => (
+                  <div key={label} className="flex items-start gap-4 rounded-xl border border-border bg-card p-4">
+                    <div
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
+                      style={{ background: "linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%)" }}
+                    >
+                      <Icon className="h-4 w-4 text-orange-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{label}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
+                    </div>
+                    <Check
+                      className="ml-auto h-4 w-4 shrink-0 text-orange-500 mt-0.5"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* CTAs */}
+            <div className="mt-6 flex flex-col gap-3">
+              <Button
+                onClick={() => router.push("/dashboard/upgrade")}
+                size="lg"
+                className="w-full gap-2 font-semibold text-base"
+                style={{ background: "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)" }}
+              >
+                <Crown className="h-4 w-4" />
+                Upgrade to Pro
+              </Button>
+              <Button variant="outline" asChild className="w-full">
+                <Link href="/dashboard/expenses">Maybe later</Link>
+              </Button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild>
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex items-center gap-3 sm:gap-4">
+        <Button variant="ghost" size="icon" asChild className="h-9 w-9 sm:h-10 sm:w-10">
           <Link href="/dashboard/expenses">
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
           </Link>
         </Button>
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground md:text-3xl">
+          <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground md:text-3xl">
             Add Expense
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm sm:text-base text-muted-foreground">
             Manually record a new expense
           </p>
         </div>

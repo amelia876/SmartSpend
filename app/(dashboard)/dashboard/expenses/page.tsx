@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -26,10 +27,10 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog"
-import { Plus, Search, Filter, MoreVertical, Pencil, Trash2, ShoppingCart, Car, Coffee, Film, Zap, CreditCard, TrendingDown, Calendar } from "lucide-react"
+import { Plus, Search, Filter, MoreVertical, Pencil, Trash2, ShoppingCart, Car, Coffee, Film, Zap, CreditCard, TrendingDown, Calendar, Crown, Lock } from "lucide-react"
+import { useAuth } from "@/contexts/auth-context"
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   groceries: ShoppingCart,
@@ -49,7 +50,7 @@ const colorMap: Record<string, string> = {
   other: "bg-muted text-muted-foreground",
 }
 
-const expenses = [
+const initialExpenses = [
   { id: 1, merchant: "Whole Foods", category: "groceries", amount: 67.42, date: "Apr 14, 2026", createdAt: new Date("2026-04-14") },
   { id: 2, merchant: "Uber", category: "transport", amount: 12.50, date: "Apr 14, 2026", createdAt: new Date("2026-04-14") },
   { id: 3, merchant: "Starbucks", category: "food-drink", amount: 6.75, date: "Apr 13, 2026", createdAt: new Date("2026-04-13") },
@@ -62,12 +63,19 @@ const expenses = [
   { id: 10, merchant: "Water Bill", category: "utilities", amount: 35.00, date: "Apr 1, 2026", createdAt: new Date("2026-04-01") },
 ]
 
+const FREE_EXPENSE_LIMIT = 3
+
 export default function ExpensesPage() {
+  const router = useRouter()
+  const { userProfile } = useAuth()
+  const isPro = userProfile?.isPro ?? false
+  const [expenses, setExpenses] = useState(initialExpenses)
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editAmount, setEditAmount] = useState<string>("")
-  const [isPro, setIsPro] = useState(false)
+  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false)
+  const [lockedExpenseName, setLockedExpenseName] = useState("")
 
   const filteredExpenses = expenses.filter((expense) => {
     const matchesSearch = expense.merchant.toLowerCase().includes(searchQuery.toLowerCase())
@@ -88,6 +96,10 @@ export default function ExpensesPage() {
     if (canEdit(expense)) {
       setEditingId(expense.id)
       setEditAmount(expense.amount.toString())
+    } else {
+      // Show upgrade prompt for locked expenses
+      setLockedExpenseName(expense.merchant)
+      setShowUpgradeDialog(true)
     }
   }
 
@@ -96,76 +108,95 @@ export default function ExpensesPage() {
     setEditingId(null)
   }
 
+  const handleDelete = (id: number) => {
+    setExpenses(expenses.filter((e) => e.id !== id))
+  }
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground md:text-3xl">
+          <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground md:text-3xl">
             Expenses
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm sm:text-base text-muted-foreground">
             View and manage all your transactions
           </p>
         </div>
-        <Button asChild className="gap-2">
-          <Link href="/dashboard/expenses/add">
-            <Plus className="h-4 w-4" />
-            Add Expense
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          {!isPro && (
+            <span className="text-xs text-muted-foreground">
+              {Math.min(expenses.length, FREE_EXPENSE_LIMIT)}/{FREE_EXPENSE_LIMIT} free
+            </span>
+          )}
+          <Button
+            asChild
+            className="gap-2 w-fit"
+            variant={!isPro && expenses.length >= FREE_EXPENSE_LIMIT ? "outline" : "default"}
+          >
+            <Link href="/dashboard/expenses/add">
+              {!isPro && expenses.length >= FREE_EXPENSE_LIMIT ? (
+                <Crown className="h-4 w-4 text-amber-500" />
+              ) : (
+                <Plus className="h-4 w-4" />
+              )}
+              Add Expense
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Stats Blocks */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-3">
         <Card className="border-border">
-          <CardContent className="pt-6">
+          <CardContent className="p-4 sm:pt-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Total Spent</p>
-                <p className="font-display text-3xl font-bold text-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-1">Total Spent</p>
+                <p className="font-display text-xl sm:text-3xl font-bold text-foreground">
                   ${totalFiltered.toFixed(2)}
                 </p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/20">
-                <TrendingDown className="h-6 w-6 text-primary" />
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-primary/20 shrink-0">
+                <TrendingDown className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="border-border">
-          <CardContent className="pt-6">
+          <CardContent className="p-4 sm:pt-6">
             <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Most Recent</p>
-                <p className="font-display text-2xl font-bold text-foreground">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-1">Most Recent</p>
+                <p className="font-display text-lg sm:text-2xl font-bold text-foreground truncate">
                   {mostRecent ? mostRecent.merchant : "N/A"}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
                   {mostRecent ? `$${mostRecent.amount.toFixed(2)}` : ""}
                 </p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-2/20">
-                <Calendar className="h-6 w-6 text-chart-2" />
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-chart-2/20 shrink-0 ml-2">
+                <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-chart-2" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="border-border">
-          <CardContent className="pt-6">
+          <CardContent className="p-4 sm:pt-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Total Entries</p>
-                <p className="font-display text-3xl font-bold text-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-1">Total Entries</p>
+                <p className="font-display text-xl sm:text-3xl font-bold text-foreground">
                   {filteredExpenses.length}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Average: ${(totalFiltered / filteredExpenses.length).toFixed(2)}
+                  Avg: ${(totalFiltered / filteredExpenses.length).toFixed(2)}
                 </p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-4/20">
-                <ShoppingCart className="h-6 w-6 text-chart-4" />
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-chart-4/20 shrink-0">
+                <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 text-chart-4" />
               </div>
             </div>
           </CardContent>
@@ -174,7 +205,7 @@ export default function ExpensesPage() {
 
       {/* Filters */}
       <Card className="border-border">
-        <CardContent className="flex flex-col gap-4 p-4 sm:flex-row">
+        <CardContent className="flex flex-col gap-3 p-3 sm:p-4 sm:flex-row sm:gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -217,28 +248,33 @@ export default function ExpensesPage() {
               const canEditThis = canEdit(expense)
 
               return (
-                <div key={expense.id} className="flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-secondary">
-                  <div className="flex items-center gap-3 flex-1">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-full ${colorClass}`}>
-                      <Icon className="h-5 w-5" />
+                <div key={expense.id} className="flex items-center justify-between rounded-lg p-2 sm:p-3 transition-colors hover:bg-secondary">
+                  <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                    <div className={`flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full shrink-0 ${colorClass}`}>
+                      <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-foreground">{expense.merchant}</p>
-                      <div className="flex items-center gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{expense.merchant}</p>
+                      <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
                         <Badge variant="secondary" className="text-xs capitalize">
                           {expense.category.replace("-", " & ")}
                         </Badge>
-                        <span className="text-xs text-muted-foreground">{expense.date}</span>
+                        <span className="text-xs text-muted-foreground hidden sm:inline">{expense.date}</span>
                         {!canEditThis && (
-                          <Badge variant="outline" className="text-xs text-destructive">
-                            Locked
+                          <Badge 
+                            variant="outline" 
+                            className="text-xs text-amber-600 border-amber-300 hidden sm:inline-flex gap-1 cursor-pointer hover:bg-amber-50"
+                            onClick={() => handleEdit(expense)}
+                          >
+                            <Crown className="h-3 w-3" />
+                            Pro
                           </Badge>
                         )}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                     {isEditing ? (
                       <Dialog open={isEditing} onOpenChange={(open) => !open && setEditingId(null)}>
                         <DialogContent>
@@ -266,7 +302,7 @@ export default function ExpensesPage() {
                         </DialogContent>
                       </Dialog>
                     ) : (
-                      <span className="font-medium text-foreground min-w-20 text-right">
+                      <span className="font-medium text-foreground text-sm sm:text-base min-w-16 sm:min-w-20 text-right">
                         ${expense.amount.toFixed(2)}
                       </span>
                     )}
@@ -280,14 +316,25 @@ export default function ExpensesPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem
                           onClick={() => handleEdit(expense)}
-                          disabled={!canEditThis}
-                          className={!canEditThis ? "opacity-50 cursor-not-allowed" : ""}
+                          className={!canEditThis ? "text-amber-600" : ""}
                         >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          {canEditThis ? "Edit" : "Edit (Locked)"}
+                          {canEditThis ? (
+                            <>
+                              <Pencil className="mr-2 h-4 w-4" />
+                              Edit
+                            </>
+                          ) : (
+                            <>
+                              <Crown className="mr-2 h-4 w-4 text-amber-500" />
+                              Edit (Upgrade)
+                            </>
+                          )}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive">
+                        <DropdownMenuItem 
+                          className="text-destructive"
+                          onClick={() => handleDelete(expense.id)}
+                        >
                           <Trash2 className="mr-2 h-4 w-4" />
                           Delete
                         </DropdownMenuItem>
@@ -300,6 +347,70 @@ export default function ExpensesPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Upgrade to Premium Dialog */}
+      <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500">
+                <Crown className="h-6 w-6 text-white" />
+              </div>
+              <DialogTitle className="text-xl">Upgrade to Premium</DialogTitle>
+            </div>
+            <DialogDescription className="text-left">
+              The expense <span className="font-semibold text-foreground">&quot;{lockedExpenseName}&quot;</span> is locked because it was created more than 24 hours ago.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+              <p className="text-sm text-foreground font-medium mb-2">
+                With Premium, you can:
+              </p>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <Pencil className="h-4 w-4 text-primary" />
+                  Edit expenses anytime, no 24-hour limit
+                </li>
+                <li className="flex items-center gap-2">
+                  <Lock className="h-4 w-4 text-primary" />
+                  Unlock all locked expenses instantly
+                </li>
+                <li className="flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-primary" />
+                  Unlimited receipt scans per day
+                </li>
+              </ul>
+            </div>
+            
+            <p className="text-xs text-muted-foreground text-center">
+              Free users can only edit expenses within 24 hours of creation.
+            </p>
+          </div>
+
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowUpgradeDialog(false)}
+              className="w-full sm:w-auto"
+            >
+              Maybe Later
+            </Button>
+            <Button 
+              onClick={() => {
+                setShowUpgradeDialog(false)
+                router.push("/dashboard/upgrade")
+              }}
+              className="w-full sm:w-auto gap-2"
+              style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)' }}
+            >
+              <Crown className="h-4 w-4" />
+              Upgrade Now
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

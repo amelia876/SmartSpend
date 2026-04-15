@@ -9,7 +9,7 @@ import { Spinner } from "@/components/ui/spinner"
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <DashboardHeader />
       <QuickActions />
       
@@ -17,7 +17,7 @@ export default function DashboardPage() {
         <StatsCards />
       </Suspense>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
         <Suspense fallback={<div className="flex justify-center py-8"><Spinner /></div>}>
           <SpendingChart />
         </Suspense>
