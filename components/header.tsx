@@ -26,7 +26,7 @@ export function Header() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-8">
           <Link
             href="#features"
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -47,7 +47,7 @@ export function Header() {
           </Link>
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-3">
           <Button variant="ghost" asChild>
             <Link href="/login">Log In</Link>
           </Button>
@@ -60,7 +60,7 @@ export function Header() {
         <Button
           variant="ghost"
           size="icon"
-          className="hidden"
+          className="md:hidden"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

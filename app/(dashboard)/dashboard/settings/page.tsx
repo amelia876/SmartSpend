@@ -95,13 +95,13 @@ export default function SettingsPage() {
   const isPro = userProfile?.isPro === true
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-bold text-foreground md:text-3xl">Settings</h1>
-        <p className="text-muted-foreground">Manage your account preferences</p>
+        <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground md:text-3xl">Settings</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Manage your account preferences</p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
         {/* Profile Settings */}
         <Card className="border-border">
           <CardHeader>

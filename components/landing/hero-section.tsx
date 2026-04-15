@@ -21,11 +21,11 @@ export function HeroSection() {
               Now available for everyone
             </div>
 
-            <h1 className="font-display text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl text-balance">
+            <h1 className="font-display text-3xl sm:text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl text-balance">
               Track Expenses. <span className="text-primary">Master Your Budget.</span>
             </h1>
 
-            <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
+            <p className="max-w-lg text-base sm:text-lg leading-relaxed text-muted-foreground px-2 sm:px-0">
               SmartSpend makes managing your money effortless. Scan receipts, 
               track expenses automatically, and stay on top of your budget 
               with intelligent insights.
@@ -43,20 +43,20 @@ export function HeroSection() {
               </Button>
             </div>
 
-            <div className="flex flex-row items-center gap-6 pt-4 justify-center">
+            <div className="flex flex-row items-center gap-4 sm:gap-6 pt-4 justify-center flex-wrap">
               <div className="flex flex-col items-center">
-                <span className="font-display text-2xl font-bold text-foreground">50K+</span>
-                <span className="text-sm text-muted-foreground">Active Users</span>
+                <span className="font-display text-xl sm:text-2xl font-bold text-foreground">50K+</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">Active Users</span>
               </div>
-              <div className="h-8 w-px bg-border" />
+              <div className="h-6 sm:h-8 w-px bg-border" />
               <div className="flex flex-col items-center">
-                <span className="font-display text-2xl font-bold text-foreground">$2M+</span>
-                <span className="text-sm text-muted-foreground">Money Tracked</span>
+                <span className="font-display text-xl sm:text-2xl font-bold text-foreground">$2M+</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">Money Tracked</span>
               </div>
-              <div className="h-8 w-px bg-border" />
+              <div className="h-6 sm:h-8 w-px bg-border" />
               <div className="flex flex-col items-center">
-                <span className="font-display text-2xl font-bold text-foreground">4.9</span>
-                <span className="text-sm text-muted-foreground">App Rating</span>
+                <span className="font-display text-xl sm:text-2xl font-bold text-foreground">4.9</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">App Rating</span>
               </div>
             </div>
           </div>

@@ -35,26 +35,26 @@ export function DashboardTopBar() {
 
   return (
     <div className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
-      <div className="flex h-16 items-center justify-between px-6">
+      <div className="flex h-14 sm:h-16 items-center justify-between px-3 sm:px-6">
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/images/logo.png"
             alt="SmartSpend"
-            width={32}
-            height={32}
-            className="rounded-full"
+            width={28}
+            height={28}
+            className="rounded-full sm:w-8 sm:h-8"
           />
           <span className="font-display font-bold text-foreground hidden sm:inline">SmartSpend</span>
         </Link>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           <NotificationCenter />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
-                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
-                  <User className="h-4 w-4 text-primary" />
+              <Button variant="ghost" size="icon" className="relative h-8 w-8 sm:h-9 sm:w-9">
+                <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-primary/20 flex items-center justify-center">
+                  <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
                 </div>
               </Button>
             </DropdownMenuTrigger>
@@ -93,11 +93,11 @@ export function DashboardTopBar() {
             variant="outline"
             size="icon"
             onClick={() => router.back()}
-            className="h-9 w-9 shrink-0"
+            className="h-8 w-8 sm:h-9 sm:w-9 shrink-0"
             aria-label="Go back"
             title="Go back"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </Button>
         </div>
       </div>

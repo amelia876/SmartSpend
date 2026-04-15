@@ -123,36 +123,36 @@ export default function SignupPage() {
   // Role Selection Screen
   if (!selectedRole) {
     return (
-      <div className="w-full max-w-lg">
-        <div className="mb-8 text-center">
-          <h2 className="font-display text-3xl font-bold text-foreground mb-2">Create Account</h2>
-          <p className="text-muted-foreground">
+      <div className="w-full max-w-lg px-2 sm:px-0">
+        <div className="mb-6 sm:mb-8 text-center">
+          <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-2">Create Account</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">
             Choose your account type to get started
           </p>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           {roles.map((role) => {
             const Icon = role.icon
             return (
               <button
                 key={role.id}
                 onClick={() => setSelectedRole(role.id)}
-                className="w-full flex items-center gap-4 p-4 rounded-xl border border-border bg-secondary/30 hover:bg-secondary hover:border-primary/50 transition-all text-left group"
+                className="w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border border-border bg-secondary/30 hover:bg-secondary hover:border-primary/50 transition-all text-left group"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                  <Icon className="h-6 w-6 text-primary" />
+                <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors shrink-0">
+                  <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                 </div>
-                <div className="flex-1">
-                  <p className="font-semibold text-foreground">{role.label}</p>
-                  <p className="text-sm text-muted-foreground">{role.description}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-foreground text-sm sm:text-base">{role.label}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground truncate">{role.description}</p>
                 </div>
               </button>
             )
           })}
         </div>
 
-        <p className="mt-8 text-center text-sm text-muted-foreground">
+        <p className="mt-6 sm:mt-8 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
           <Link href="/login" className="font-semibold text-primary hover:underline">
             Sign in
@@ -164,18 +164,18 @@ export default function SignupPage() {
 
   // Signup Form Screen
   return (
-    <div className="w-full max-w-md max-h-[80vh] overflow-y-auto">
+    <div className="w-full max-w-md max-h-[85vh] overflow-y-auto px-1">
       <button
         onClick={() => setSelectedRole("")}
-        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6"
+        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 sm:mb-6"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to role selection
       </button>
 
-      <div className="mb-6 text-center">
-        <h2 className="font-display text-2xl font-bold text-foreground mb-1">Sign up as {roles.find(r => r.id === selectedRole)?.label}</h2>
-        <p className="text-sm text-muted-foreground">Fill in your details to create an account</p>
+      <div className="mb-4 sm:mb-6 text-center">
+        <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-1">Sign up as {roles.find(r => r.id === selectedRole)?.label}</h2>
+        <p className="text-xs sm:text-sm text-muted-foreground">Fill in your details to create an account</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
