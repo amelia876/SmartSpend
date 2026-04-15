@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -40,16 +42,21 @@ const paymentMethods = [
 ]
 
 export default function UpgradeProPage() {
+  const router = useRouter()
+  const { upgradeToPro } = useAuth()
   const [selectedPayment, setSelectedPayment] = useState("card")
   const [isProcessing, setIsProcessing] = useState(false)
 
   const handlePayment = async () => {
     setIsProcessing(true)
-    // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    setIsProcessing(false)
-    // In a real app, this would integrate with Stripe, PayPal, etc.
-    alert(`Payment method: ${selectedPayment}. Integration coming soon!`)
+    // Simulate payment processing delay
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+    
+    // Demo: Upgrade user to Pro
+    await upgradeToPro()
+    
+    // Redirect to dashboard with success
+    router.push("/dashboard?upgraded=true")
   }
 
   return (

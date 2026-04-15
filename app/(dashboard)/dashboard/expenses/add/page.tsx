@@ -17,6 +17,7 @@ import {
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
 import { ArrowLeft, DollarSign, Store, Calendar, Tag, FileText, Crown, Check, Zap, BarChart3, Lock } from "lucide-react"
+import { useAuth } from "@/contexts/auth-context"
 
 const FREE_EXPENSE_LIMIT = 3
 // In a real app this count would come from the database
@@ -36,6 +37,8 @@ const categories = [
 
 export default function AddExpensePage() {
   const router = useRouter()
+  const { userProfile } = useAuth()
+  const isPro = userProfile?.isPro ?? false
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     merchant: "",
@@ -46,7 +49,6 @@ export default function AddExpensePage() {
   })
 
   // Free users are limited to FREE_EXPENSE_LIMIT expenses
-  const isPro = false
   const isAtLimit = !isPro && CURRENT_EXPENSE_COUNT >= FREE_EXPENSE_LIMIT
 
   const handleSubmit = async (e: React.FormEvent) => {

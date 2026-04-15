@@ -35,6 +35,8 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<void>
   refreshProfile: () => Promise<void>
   updateProfile: (data: Partial<Pick<UserProfile, "name" | "country" | "institution" | "businessName" | "businessType">>) => Promise<void>
+  upgradeToPro: () => Promise<void>
+  downgradeToFree: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -179,6 +181,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUserProfile((prev) => (prev ? { ...prev, ...data } : prev))
   }
 
+  // Demo function to upgrade to Pro (for demonstration purposes)
+  const upgradeToPro = async () => {
+    if (!user) throw new Error("No user logged in")
+
+    try {
+      await updateDoc(doc(db, "users", user.uid), { isPro: true })
+    } catch (error) {
+      console.error("[v0] Failed to update Firestore:", error)
+    }
+
+    // Update local state immediately
+    setUserProfile((prev) => (prev ? { ...prev, isPro: true } : prev))
+  }
+
+  // Demo function to downgrade to Free (for demonstration purposes)
+  const downgradeToFree = async () => {
+    if (!user) throw new Error("No user logged in")
+
+    try {
+      await updateDoc(doc(db, "users", user.uid), { isPro: false })
+    } catch (error) {
+      console.error("[v0] Failed to update Firestore:", error)
+    }
+
+    // Update local state immediately
+    setUserProfile((prev) => (prev ? { ...prev, isPro: false } : prev))
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -191,6 +221,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         resetPassword,
         refreshProfile,
         updateProfile,
+        upgradeToPro,
+        downgradeToFree,
       }}
     >
       {children}

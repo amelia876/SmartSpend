@@ -27,7 +27,7 @@ const mockTeamMembers = [
 ]
 
 export default function SettingsPage() {
-  const { user, userProfile, updateProfile } = useAuth()
+  const { user, userProfile, updateProfile, upgradeToPro, downgradeToFree } = useAuth()
 
   const [isLoading, setIsLoading] = useState(false)
   const [saveError, setSaveError] = useState("")
@@ -248,7 +248,29 @@ export default function SettingsPage() {
                 </p>
               </div>
             </div>
-            {!isPro && (
+            {isPro ? (
+              <div className="rounded-lg border border-chart-2/50 bg-chart-2/5 p-4">
+                <div className="mb-3 flex items-center gap-2">
+                  <Crown className="h-5 w-5 text-chart-2" />
+                  <p className="font-semibold text-foreground">You&apos;re on Pro!</p>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Enjoy unlimited scans, advanced analytics, and all premium features.
+                </p>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Want to test free experience?
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={downgradeToFree}
+                  >
+                    Downgrade (Demo)
+                  </Button>
+                </div>
+              </div>
+            ) : (
               <div className="rounded-lg border border-primary/50 bg-primary/5 p-4">
                 <div className="mb-3 flex items-center gap-2">
                   <Crown className="h-5 w-5 text-primary" />

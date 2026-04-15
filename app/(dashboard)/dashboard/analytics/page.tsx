@@ -26,6 +26,7 @@ import {
   Legend,
 } from "recharts"
 import { TrendingUp, TrendingDown, DollarSign, Receipt, ArrowUpRight, Crown, Lock, BarChart3, Zap } from "lucide-react"
+import { useAuth } from "@/contexts/auth-context"
 
 const monthlyData = [
   { name: "Jan", spending: 1200, budget: 1500 },
@@ -50,7 +51,8 @@ const weeklyComparison = [
 ]
 
 export default function AnalyticsPage() {
-  const isPro = false // This would come from user subscription status
+  const { userProfile } = useAuth()
+  const isPro = userProfile?.isPro ?? false
   const totalSpending = categoryData.reduce((acc, item) => acc + item.value, 0)
   const avgDaily = Math.round(totalSpending / 30)
   const transactionCount = 47

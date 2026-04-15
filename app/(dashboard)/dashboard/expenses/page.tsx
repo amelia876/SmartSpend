@@ -30,6 +30,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Plus, Search, Filter, MoreVertical, Pencil, Trash2, ShoppingCart, Car, Coffee, Film, Zap, CreditCard, TrendingDown, Calendar, Crown, Lock } from "lucide-react"
+import { useAuth } from "@/contexts/auth-context"
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   groceries: ShoppingCart,
@@ -66,12 +67,13 @@ const FREE_EXPENSE_LIMIT = 3
 
 export default function ExpensesPage() {
   const router = useRouter()
+  const { userProfile } = useAuth()
+  const isPro = userProfile?.isPro ?? false
   const [expenses, setExpenses] = useState(initialExpenses)
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editAmount, setEditAmount] = useState<string>("")
-  const [isPro] = useState(false) // This would come from user subscription status
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false)
   const [lockedExpenseName, setLockedExpenseName] = useState("")
 

@@ -17,6 +17,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { PieChart, Crown, Zap, BarChart3, Lock } from "lucide-react"
+import { useAuth } from "@/contexts/auth-context"
 
 const FREE_BUDGET_LIMIT = 3
 
@@ -49,10 +50,11 @@ const initialBudgets = [
 
 export default function BudgetsPage() {
   const router = useRouter()
+  const { userProfile } = useAuth()
+  const isPro = userProfile?.isPro ?? false
   const [budgets, setBudgets] = useState(initialBudgets)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false)
-  const [isPro] = useState(false)
 
   const totalBudget = budgets.reduce((acc, b) => acc + b.limit, 0)
   const totalSpent = budgets.reduce((acc, b) => acc + b.spent, 0)
