@@ -69,10 +69,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="w-full max-w-md">
-      <div className="mb-8 text-center">
-        <h2 className="font-display text-3xl font-bold text-foreground mb-2">Sign in</h2>
-        <p className="text-muted-foreground">
+    <div className="w-full max-w-md px-2 sm:px-0">
+      <div className="mb-6 sm:mb-8 text-center">
+        <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-2">Sign in</h2>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Enter your credentials to access your account
         </p>
       </div>

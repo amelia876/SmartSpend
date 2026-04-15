@@ -64,25 +64,25 @@ export default function UpgradeProPage() {
         </Button>
       </div>
 
-      <div className="container mx-auto px-4 pb-12">
+      <div className="container mx-auto px-3 sm:px-4 pb-8 sm:pb-12">
         {/* Hero Section */}
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 mb-6">
-            <Crown className="h-8 w-8 text-primary" />
+        <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
+          <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary/20 mb-4 sm:mb-6">
+            <Crown className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
           </div>
-          <Badge className="mb-4 gap-2 bg-primary/10 text-primary border-primary/30">
+          <Badge className="mb-3 sm:mb-4 gap-2 bg-primary/10 text-primary border-primary/30 text-xs sm:text-sm">
             <Sparkles className="h-3 w-3" />
             Limited Time Offer - Save 20%
           </Badge>
-          <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4 text-balance">
+          <h1 className="font-display text-2xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3 sm:mb-4 text-balance px-2">
             Upgrade to SmartSpend Pro
           </h1>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-base sm:text-xl text-muted-foreground px-4 sm:px-0">
             Unlock unlimited scans, advanced analytics, and take full control of your finances
           </p>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-5 max-w-6xl mx-auto">
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-5 max-w-6xl mx-auto">
           {/* Pro Benefits - Left Side */}
           <div className="lg:col-span-3 space-y-6">
             <Card className="border-border overflow-hidden">
@@ -274,22 +274,22 @@ export default function UpgradeProPage() {
         </div>
 
         {/* Trust Badges */}
-        <div className="max-w-4xl mx-auto mt-12">
-          <div className="flex flex-wrap justify-center gap-8 text-muted-foreground text-sm">
-            <div className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-primary" />
+        <div className="max-w-4xl mx-auto mt-8 sm:mt-12">
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-muted-foreground text-xs sm:text-sm">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
               <span>7-Day Free Trial</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-primary" />
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
               <span>Cancel Anytime</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-primary" />
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
               <span>30-Day Money Back</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-primary" />
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
               <span>Secure Payment</span>
             </div>
           </div>
